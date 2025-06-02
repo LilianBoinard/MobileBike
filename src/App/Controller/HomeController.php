@@ -10,21 +10,19 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class HomeController
+class HomeController extends AbstractController
 {
-    private Database $database;
-    private ContainerInterface $container;
     private UserRepository $userRepository;
 
-    public function __construct(Database $database, ContainerInterface $container){
-        $this->database = $database;
+    public function __construct(ContainerInterface $container){
         $this->container = $container;
+        $this->database = $this->container->get(Database::class);
         $this->userRepository = new UserRepository($this->database);
     }
 
     public function index(ServerRequestInterface $request): ResponseInterface
     {
-        $user = $this->userRepository->findByLogin('admin');
+        $user = $this->userRepository->findByUsername('admin');
         return new Response(
             200,
             ['Content-Type' => 'text/html'],
