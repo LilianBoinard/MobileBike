@@ -1,0 +1,25 @@
+@use '../../theme';
+@use 'team_cards';
+
+.team {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4rem;
+
+  &-image {
+    margin-top: -25rem;
+    width: 70rem;
+  }
+  &-section-title {
+    margin-top: 4rem;
+    font-size: theme.$font-size-extra-large;
+    font-weight: bold;
+  }
+  &-section-description {
+    margin-top: 2rem;
+    font-size: theme.$font-size-large;
+    font-weight: normal;
+  }
+}

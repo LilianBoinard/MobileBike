@@ -1,0 +1,30 @@
+@use '../theme';
+
+.banner {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+
+  &-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+    filter: grayscale(50%);
+  }
+
+  &-title {
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    background-color: theme.$color-background;
+    padding: 15px 25px;
+    font-size: theme.$font-size-extra-large;
+    font-weight: bold;
+    color: theme.$color-text;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+}

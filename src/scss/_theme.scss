@@ -1,0 +1,26 @@
+// Couleurs
+
+$color-primary: #d32f2f;        // couleur principale
+$color-secondary: #2e72cc;      // couleur secondaire
+$color-accent: #e67e22;         // couleur d’accentuation
+
+$color-background: #ffffff;     // fond global
+$color-surface: #ededed;        // éléments comme les cartes
+$color-text: #333333;           // texte principal
+$color-text-light: #ffffff;     // texte sur fond sombre
+
+$color-border: #dddddd;         // bordures, séparateurs
+$color-muted: #999999;          // texte secondaire ou désactivé
+
+// Typographie
+@import url(https://fonts.googleapis.com/css?family=Montserrat:300,400,700);
+$font-family-base: 'Montserrat', sans-serif;
+$font-size-base: 16px;
+$font-size-small: 14px;
+$font-size-medium: 18px;
+$font-size-large: 20px;
+$font-size-extra-large: 28px;
+
+$line-height-base: 1.5;
+$font-weight-normal: 400;
+$font-weight-bold: 700;

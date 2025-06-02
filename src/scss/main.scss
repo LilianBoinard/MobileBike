@@ -1,0 +1,33 @@
+@use "theme";
+@use "components/layout/menubar";
+@use "components/layout/footer";
+@use "components/banner";
+@use "pages/nos-velos/catalogue";
+@use "pages/nos-velos/card";
+@use "pages/contact/contact";
+@use "pages/services/services";
+@use "pages/qui-sommes-nous/qui-sommes-nous";
+@use "responsive";
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: theme.$font-family-base;
+}
+
+html, body {
+  height: 100%;
+  background-color: theme.$color-background;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+}

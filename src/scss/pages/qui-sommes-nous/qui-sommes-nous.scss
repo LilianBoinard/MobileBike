@@ -1,0 +1,74 @@
+@use '../../theme';
+@use 'team';
+@use 'partnership';
+
+.about-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .about-background {
+    position: relative;
+    width: 100%;
+    height: 45rem;
+    z-index: 1;
+    object-fit: cover;
+    filter: brightness(0.4);
+  }
+
+  .about-title {
+    position: absolute;
+    top: 48%;
+    left: 45%;
+    transform: rotate(-5deg);
+    color: white;
+    font-size: 3rem;
+    z-index: 1;
+    opacity: 0.7;
+  }
+
+  .hero-section {
+    margin-top: 4rem;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+    gap: 4rem;
+
+    &-title {
+      border-bottom: 2.5px solid black;
+      width: fit-content;
+    }
+
+    &-cta {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    p {
+
+      font-size: theme.$font-size-medium;
+      line-height: 32px;
+      font-weight: bold;
+    }
+  }
+
+  .hero-section-background {
+    position: relative;
+    z-index: 1;
+    top: -36.5rem;
+    width: 85rem;
+
+  }
+
+  .hero-section-chevron-icon {
+    position: relative;
+    z-index: 2;
+    top: -27rem;
+  }
+
+}
+

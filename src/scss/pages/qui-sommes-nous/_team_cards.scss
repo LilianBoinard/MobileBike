@@ -1,0 +1,65 @@
+$card-width: 387px;
+$card-height: 331px;
+$image-size: 292px;
+$info-bg-color-1: #e0e0e0;
+$info-bg-color-2: #eaf4ff;
+$info-bg-color-3: #ed816e;
+
+.team-cards-container {
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 1240px;
+  margin: 4rem auto;
+
+  .team-card {
+    position: relative;
+    width: $card-width;
+    height: $card-height;
+
+    img {
+      width: $image-size;
+      height: $image-size;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 8px;
+    }
+
+    .info-box {
+      position: absolute;
+      width: 310px;
+      height: 97px;
+      top: 234px;
+      left: 85px;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 8px;
+
+      h4 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 0.25rem;
+        color: #000;
+      }
+
+      p {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        font-size: 1rem;
+        color: #000;
+      }
+
+      &.style-1 { background-color: $info-bg-color-1; }
+      &.style-2 { background-color: $info-bg-color-2; }
+      &.style-3 { background-color: $info-bg-color-3; }
+    }
+  }
+}

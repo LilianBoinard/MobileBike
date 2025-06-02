@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# IDE / éditeurs
+.vscode/
+.idea/
+*.sw?
+
+# Fichiers temporaires
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Cache navigateur ou outils
+.cache/
+
+# Lib
+vendor/
+
+# Env
+.env
+
+composer.lock

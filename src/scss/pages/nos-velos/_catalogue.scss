@@ -1,0 +1,42 @@
+@use '../../theme';
+
+.catalogue {
+  margin: 5rem auto;
+  padding: 0 1.5rem;
+  max-width: 1440px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  &-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    &-text {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    &-tools {
+      font-size: theme.$font-size-medium;
+      font-weight: bold;
+      display: flex;
+      gap: 3rem;
+    }
+
+    &-tool {
+      color: theme.$color-text;
+      display: flex;
+      gap: 1rem;
+    }
+  }
+
+  &-items-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+  }
+}

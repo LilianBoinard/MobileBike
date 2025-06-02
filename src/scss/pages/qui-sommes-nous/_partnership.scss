@@ -1,0 +1,24 @@
+@use '../../theme';
+
+.partnership {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  margin-bottom: 4rem;
+  &-section-title {
+    font-size: theme.$font-size-extra-large;
+    font-weight: bold;
+    font-style: italic;
+  }
+  &-section-image {
+
+  }
+  &-section-desc {
+    font-size: theme.$font-size-large;
+    font-weight: normal;
+    width: 65%;
+    line-height: 32px;
+  }
+}

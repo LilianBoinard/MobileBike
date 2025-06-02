@@ -1,0 +1,39 @@
+@use '../../theme';
+@use "../button";
+
+.footer {
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background-color: theme.$color-background;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 10%;
+  background-color: theme.$color-surface;
+  border-top: 1px solid theme.$color-border;
+}
+
+.footer-question {
+  font-size: theme.$font-size-extra-large;
+  font-weight: bold;
+  color: theme.$color-text;
+}
+
+.contact-button {
+  @extend .cta-button;
+}
+
+.footer-copyright {
+  text-align: center;
+  padding: 15px 0;
+  font-weight: bold;
+  color: theme.$color-text;
+  background-color: theme.$color-background;
+  font-size: theme.$font-size-small;
+  border-top: 1px solid theme.$color-border;
+}

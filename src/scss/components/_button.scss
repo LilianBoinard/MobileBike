@@ -1,0 +1,17 @@
+@use '../theme';
+@use 'sass:color';
+
+.cta-button {
+  background-color: theme.$color-primary;
+  color: theme.$color-text-light;
+  border: none;
+  padding: 15px 25px;
+  font-size: theme.$font-size-base;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: color.adjust(theme.$color-primary, $lightness: -10%)
+}
