@@ -2,7 +2,7 @@
 
 namespace MobileBike\App\Repository;
 
-use MobileBike\App\Model\User;
+use MobileBike\App\Model\User\User;
 use MobileBike\Core\Database\Database;
 use PDO;
 
