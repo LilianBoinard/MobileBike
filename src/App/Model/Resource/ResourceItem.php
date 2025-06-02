@@ -6,6 +6,6 @@ use MobileBike\App\Model\User\User;
 
 class ResourceItem extends Resource
 {
-    private User $user;
-    private Resource $resource;
+    public User $user;
+    public Resource $resource;
 }

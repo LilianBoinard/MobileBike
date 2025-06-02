@@ -6,8 +6,8 @@ use MobileBike\App\Model\Product\Product;
 
 class MobileBike extends Product
 {
-    private string $image;
-    private ?string $color = null;
-    private ?string $material = null;
-    private string $brand;
+    public string $image;
+    public ?string $color = null;
+    public ?string $material = null;
+    public string $brand;
 }

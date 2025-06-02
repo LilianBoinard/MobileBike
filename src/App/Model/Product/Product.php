@@ -4,10 +4,10 @@ namespace MobileBike\App\Model\Product;
 
 class Product
 {
-    private int $id;
-    private string $name;
-    private string $description;
-    private float $price;
-    private bool $stock;
+    public int $id;
+    public string $name;
+    public string $description;
+    public float $price;
+    public bool $stock;
 
 }

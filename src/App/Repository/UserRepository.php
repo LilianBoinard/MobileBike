@@ -27,7 +27,7 @@ class UserRepository extends AbstractRepository
 
     public function save(object $entity): bool {
 
-        if ($entity instanceof User) {
+        if (!$entity instanceof User) {
             throw new \InvalidArgumentException('L\'entité doit être une instance de User');
         }
 
