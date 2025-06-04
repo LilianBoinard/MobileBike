@@ -1,10 +1,10 @@
 <?php
 
-namespace MobileBike\App\Repository\User\Type;
+namespace MobileBike\App\Repository\User;
 
 use MobileBike\App\Repository\AbstractRepository;
 
-class AdministratorRepository extends AbstractRepository
+class ClientRepository extends AbstractRepository
 {
 
     public function save(object $entity): bool
