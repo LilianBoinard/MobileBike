@@ -3,7 +3,7 @@
 namespace MobileBike\App\Controller;
 
 use GuzzleHttp\Psr7\Response;
-use MobileBike\App\Repository\UserRepository;
+use MobileBike\App\Repository\User\UserRepository;
 use MobileBike\Core\Database\Database;
 use MobileBike\Core\View\View;
 use Psr\Container\ContainerInterface;

@@ -1,8 +1,9 @@
 <?php
 
-namespace MobileBike\App\Repository;
+namespace MobileBike\App\Repository\User;
 
 use MobileBike\App\Model\User\User;
+use MobileBike\App\Repository\AbstractRepository;
 use MobileBike\Core\Database\Database;
 use PDO;
 

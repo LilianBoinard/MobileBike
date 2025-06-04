@@ -1,8 +1,9 @@
 <?php
 
-namespace MobileBike\App\Repository;
+namespace MobileBike\App\Repository\Product;
 
 use MobileBike\App\Model\Product\Product;
+use MobileBike\App\Repository\AbstractRepository;
 use MobileBike\Core\Database\Database;
 
 class ProductRepository extends AbstractRepository
