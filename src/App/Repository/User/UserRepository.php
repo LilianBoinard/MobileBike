@@ -4,13 +4,15 @@ namespace MobileBike\App\Repository\User;
 
 use MobileBike\App\Model\User\User;
 use MobileBike\App\Repository\AbstractRepository;
+use MobileBike\App\Repository\Contracts\UserRepositoryInterface;
 use MobileBike\Core\Database\Database;
 use PDO;
 
-class UserRepository extends AbstractRepository
+class UserRepository extends AbstractRepository implements UserRepositoryInterface
 {
     protected string $table = 'user_';
     protected string $entityClass = User::class;
+    protected string $primaryKey = 'id_user';
 
     public function __construct(Database $database)
     {

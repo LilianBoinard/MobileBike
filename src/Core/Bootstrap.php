@@ -4,14 +4,21 @@ namespace MobileBike\Core;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use HttpSoft\Emitter\SapiEmitter;
+use MobileBike\App\Repository\Contracts\UserRepositoryInterface;
+use MobileBike\App\Repository\User\UserRepository;
+use MobileBike\Core\Authentication\SessionAuthentication;
 use MobileBike\Core\Container\Container;
+use MobileBike\Core\Contracts\Authentication\AuthenticationInterface;
+use MobileBike\Core\Contracts\Session\SessionInterface;
 use MobileBike\Core\Database\Database;
 use MobileBike\Core\Exception\ExceptionHandler;
+use MobileBike\Core\Middleware\AuthenticationMiddleware;
 use MobileBike\Core\Middleware\ExceptionMiddleware;
 use MobileBike\Core\Exception\Exceptions\NotFoundException;
 use MobileBike\Core\Middleware\MiddlewareHandler;
 use MobileBike\Core\Routing\RouteLoader;
 use MobileBike\Core\Routing\Router;
+use MobileBike\Core\Session\NativeSession;
 use MobileBike\Core\View\View;
 use PDO;
 use Psr\Container\ContainerInterface;
@@ -34,7 +41,7 @@ class Bootstrap
     public static function init(): self
     {
         $app = new self();
-        session_start();
+
         self::loadEnvironment();
 
         $container = new Container();
@@ -65,7 +72,8 @@ class Bootstrap
     {
         // Middleware d'exception (doit être le premier pour capturer toutes les erreurs)
         $this->addGlobalMiddleware(ExceptionMiddleware::class);
-
+        // Middleware d'authentification
+        $this->addGlobalMiddleware(AuthenticationMiddleware::class);
         // Autres middlewares globaux possibles
         // $this->addGlobalMiddleware(CorsMiddleware::class);
         // $this->addGlobalMiddleware(AuthMiddleware::class);
@@ -137,6 +145,30 @@ class Bootstrap
             );
         });
 
+        // Session
+        $container->singleton(SessionInterface::class, function () {
+            return new NativeSession();
+        });
+
+        // Authentication
+        $container->singleton(AuthenticationInterface::class, function ($container) {
+            return new SessionAuthentication(
+                $container->get(UserRepositoryInterface::class), // Changé ici
+                $container->get(SessionInterface::class)
+            );
+        });
+
+        // AuthenticationMiddleware
+        $container->singleton(AuthenticationMiddleware::class, function ($container) {
+            return new AuthenticationMiddleware(
+                $container->get(AuthenticationInterface::class),
+                [
+                    'redirectTo' => '/login',
+                    'whitelist' => ['login', 'register', 'home']
+                ]
+            );
+        });
+
         $container->set(ContainerInterface::class, function ($container) {
             return $container;
         });
@@ -158,16 +190,20 @@ class Bootstrap
         $container->singleton(PDO::class, function ($container) {
             return $container->get(Database::class)->getPdo();
         });
+
+        $container->singleton(UserRepositoryInterface::class, function ($container) {
+            return new UserRepository($container->get(Database::class));
+        });
     }
 
     /**
-     * Lance l'application - VERSION SIMPLIFIÉE avec middleware d'exception
+     * Lance l'application
      */
     public function run(): void
     {
         $request = ServerRequest::fromGlobals();
 
-        // Recherche de la route
+        // 1. Recherche de la route
         $routeMatch = $this->router->match_request($request);
 
         if ($routeMatch === null) {
@@ -177,22 +213,25 @@ class Bootstrap
         $route = $routeMatch->getRoute();
         $params = $routeMatch->getParameters();
 
-        // Construction de la chaîne de middlewares
+        // 2. Injection de la route dans les attributs de la requête
+        $request = $request->withAttribute('route', $route);
+
+        // 3. Construction de la chaîne de middlewares
         $middlewareHandler = new MiddlewareHandler();
 
-        // 1. Ajout des middlewares globaux (exception en premier)
+        // 4. Ajout des middlewares globaux (exception en premier)
         foreach ($this->globalMiddlewares as $globalMiddleware) {
             $middlewareInstance = $this->container->get($globalMiddleware);
             $middlewareHandler->addMiddleware($middlewareInstance);
         }
 
-        // 2. Ajout des middlewares spécifiques à la route
+        // 5. Ajout des middlewares spécifiques à la route
         $routeMiddlewares = method_exists($route, 'getMiddlewares') ? $route->getMiddlewares() : [];
         foreach ($routeMiddlewares as $middleware) {
             $middlewareHandler->addMiddleware($middleware);
         }
 
-        // 3. Configuration du controller final
+        // 6. Configuration du controller final
         $handler = $route->getHandler();
         if (is_string($handler) && str_contains($handler, '@')) {
             [$controllerClass, $method] = explode('@', $handler, 2);
@@ -210,7 +249,7 @@ class Bootstrap
             throw new \InvalidArgumentException('Format de handler non supporté');
         }
 
-        // 4. Exécution de la chaîne complète et émission
+        // 7. Exécution de la chaîne complète et émission
         $response = $middlewareHandler->handle($request);
         $this->emitter->emit($response);
     }

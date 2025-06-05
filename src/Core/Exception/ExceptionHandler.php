@@ -42,6 +42,9 @@ class ExceptionHandler
     {
         // Log de l'exception
         $this->logException($exception, $request);
+        if ($this->getStatusCode($exception) >= 500) {
+            error_log($exception);
+        }
 
         // Détermination du code de statut HTTP
         $statusCode = $this->getStatusCode($exception);
@@ -117,7 +120,6 @@ class ExceptionHandler
         try {
             $html = $this->view->twig($template, $data);
         } catch (\Exception $e) {
-            // Fallback en cas d'erreur de template
             $html = $this->view->twig('http/error.html.twig', $data);
         }
 
@@ -134,41 +136,5 @@ class ExceptionHandler
     private function getErrorTemplate(int $statusCode): string
     {
         return $this->errorTemplates[$statusCode] ?? $this->errorTemplates[500];
-    }
-
-    /**
-     * HTML de fallback en cas d'erreur de template
-     */
-    private function getFallbackHtml(int $statusCode, string $message): string
-    {
-        return sprintf(
-            '<!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <title>Erreur %d</title>
-                <style>
-                    body { font-family: sans-serif; margin: 40px; }
-                    .error { background: #f8f8f8; padding: 20px; border-left: 4px solid #e74c3c; }
-                </style>
-            </head>
-            <body>
-                <div class="error">
-                    <h1>Erreur %d</h1>
-                    <p>%s</p>
-                </div>
-            </body>
-            </html>',
-            $statusCode,
-            $statusCode,
-            htmlspecialchars($message)
-        );
-    }
-
-    /**
-     * Configure les templates d'erreur personnalisés
-     */
-    public function setErrorTemplates(array $templates): void
-    {
-        $this->errorTemplates = array_merge($this->errorTemplates, $templates);
     }
 }

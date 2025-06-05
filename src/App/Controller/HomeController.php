@@ -6,7 +6,6 @@ use GuzzleHttp\Psr7\Response;
 use MobileBike\App\Repository\User\UserRepository;
 use MobileBike\Core\Database\Database;
 use MobileBike\Core\View\View;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

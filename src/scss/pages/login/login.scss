@@ -32,7 +32,11 @@
     h2 {
       text-align: center;
       margin-bottom: 1.5rem;
-      color: theme.$color-primary;
+      color: black;
+    }
+
+    .error-text {
+      color: #b71c1c;
     }
 
     .form-group {

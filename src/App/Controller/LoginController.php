@@ -3,19 +3,19 @@
 namespace MobileBike\App\Controller;
 
 use GuzzleHttp\Psr7\Response;
-use MobileBike\App\Controller\AbstractController;
-use MobileBike\Core\Container\Container;
+use MobileBike\Core\Authentication\SessionAuthentication;
 use MobileBike\Core\Database\Database;
 use MobileBike\Core\View\View;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class LoginController extends AbstractController
 {
-    public function __construct(View $view, Database $database)
+    public function __construct(View $view, Database $database, SessionAuthentication $authentication)
     {
         $this->view = $view;
         $this->database = $database;
+        $this->authentication = $authentication;
     }
 
     public function index(): ResponseInterface

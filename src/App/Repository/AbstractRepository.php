@@ -8,10 +8,10 @@ use PDO;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
-
     protected Database $database;
     protected string $table;
     protected string $entityClass;
+    protected string $primaryKey = 'id'; // Par défaut
 
     public function findAll(): array
     {
@@ -21,7 +21,8 @@ abstract class AbstractRepository implements RepositoryInterface
 
     public function findById(int $id): ?object
     {
-        $stmt = $this->database->prepare("SELECT * FROM {$this->table} WHERE id = :id LIMIT 1");
+        error_log("DEBUG - Table: {$this->table}, PK: {$this->primaryKey}");
+        $stmt = $this->database->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = :id LIMIT 1");
         $stmt->execute(['id' => $id]);
         $stmt->setFetchMode(PDO::FETCH_CLASS, $this->entityClass);
 
@@ -31,10 +32,9 @@ abstract class AbstractRepository implements RepositoryInterface
 
     abstract public function save(object $entity): bool;
 
-
     public function delete(int $id): bool
     {
-        $stmt = $this->database->prepare("DELETE FROM {$this->table} WHERE id = :id");
+        $stmt = $this->database->prepare("DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id");
         return $stmt->execute(['id' => $id]);
     }
 
@@ -46,5 +46,4 @@ abstract class AbstractRepository implements RepositoryInterface
 
         return $stmt->fetchColumn() === false;
     }
-
 }
