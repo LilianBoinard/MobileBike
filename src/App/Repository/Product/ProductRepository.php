@@ -5,6 +5,7 @@ namespace MobileBike\App\Repository\Product;
 use MobileBike\App\Model\Product\Product;
 use MobileBike\App\Repository\AbstractRepository;
 use MobileBike\Core\Database\Database;
+use PDO;
 
 class ProductRepository extends AbstractRepository
 {
@@ -57,5 +58,14 @@ class ProductRepository extends AbstractRepository
         }
 
         return $result;
+    }
+
+    public function findByInStock(): ?Product {
+        $sql = "SELECT * FROM Product WHERE stock = TRUE";
+        $stmt = $this->database->prepare($sql);
+
+        $product = $stmt->fetch();
+
+        return $product ?: null;
     }
 }

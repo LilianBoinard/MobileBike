@@ -1,0 +1,251 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* pages/services.html.twig */
+class __TwigTemplate_d37c48874ce54a539fd071fa8e35e7cd extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->blocks = [
+            'title' => [$this, 'block_title'],
+            'content' => [$this, 'block_content'],
+        ];
+    }
+
+    protected function doGetParent(array $context): bool|string|Template|TemplateWrapper
+    {
+        // line 1
+        return "layout/base.html.twig";
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $this->parent = $this->load("layout/base.html.twig", 1);
+        yield from $this->parent->unwrap()->yield($context, array_merge($this->blocks, $blocks));
+    }
+
+    // line 3
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_title(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        yield "Nos Services";
+        yield from [];
+    }
+
+    // line 5
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_content(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        // line 6
+        yield "    <main>
+
+        <div class=\"banner\">
+            <img src=\"/assets/images/page-content/services-banner.jpg\" alt=\"\" class=\"banner-image\">
+            <div class=\"banner-title\">Nos Services</div>
+        </div>
+
+        <section class=\"services\">
+
+            <div class=\"service-item\">
+                <img class=\"img-desc\" src=\"https://cycles-jv-fenioux.com/wp-content/uploads/2023/03/23.jpg\"
+                     alt=\"Assistance électrique\">
+                <div class=\"desc-service\">
+                    <h1>Assistance électrique</h1>
+                    <h3>Pour faciliter le pédalage, l'équipe des Cycles JV & Fenioux vous propose d'installer une
+                        assistance électrique sur tous types de vélos.</h3>
+                    <p>Le moteur se met en marche automatiquement lorsque l'on pédale (et se coupe lorsque le pédalage
+                        s'arrête). L'assistance électrique permet d'atteindre sans effort une vitesse de 25km/h, de
+                        grimper facilement les côtes ou d'effectuer des trajets qui seraient trop longs à parcourir avec
+                        un vélo classique.</p>
+                    <p>Que vous souhaitiez profiter d'une activité physique, d'envisager votre vélo comme moyen de
+                        mobilité au quotidien pour des parcours longs ou tout simplement d'améliorer vos performances
+                        lors de vos sorties, nous vous recommandons vivement l'assistance électrique.</p>
+                    <button onclick=\"window.location.href='./contact'\" class=\"btn contact-button\">Prendre
+                        rendez-vous
+                    </button>
+                </div>
+            </div>
+
+            <div class=\"service-item reverse\">
+                <img class=\"img-desc\" src=\"https://cycles-jv-fenioux.com/wp-content/uploads/2023/03/24.jpg\"
+                     alt=\"Entretien vélomobile\">
+                <div class=\"desc-service\">
+                    <h1>Entretien de vélomobile et réglages</h1>
+                    <h3>Nous intervenons sur tout cas de figure.</h3>
+                    <p>Qu'il s'agisse de remplacer un pneu ou de faire une grande révision des 100 000 km (oui, en
+                        vélomobile, c'est courant !) nous avons les outils et toutes les compétences pour ces missions
+                        !</p>
+                    <p>Vous n'êtes pas un ami de la mécanique ? Vous avez acheté un vélomobile d'occasion et vous
+                        souhaitez repartir serein ? Vous souhaitez vendre votre vélomobile dans le meilleur état
+                        possible ? Vous avez un doute sur le bon réglage de votre vélomobile ? Prenez rendez-vous avec
+                        notre équipe !</p>
+                    <button onclick=\"window.location.href='./products'\" class=\"btn contact-button spaced\">
+                        Découvrez nos vélos
+                    </button>
+                </div>
+            </div>
+
+            <div class=\"service-item third\">
+                <img class=\"img-desc fixed-height\" src=\"https://cycles-jv-fenioux.com/wp-content/uploads/2023/03/25.jpg\"
+                     alt=\"Réparations vélos\">
+                <div class=\"desc-service\">
+                    <h1>Réparations</h1>
+                    <h3>En collaboration avec différents partenaires, nous pouvons vous proposer des solutions de
+                        réparation complètes.</h3>
+                    <div class=\"position-right\">
+                        <ul>
+                            <li>1 artichaut</li>
+                            <li>De l'essuie-tout</li>
+                            <li>De l'essuie-tout</li>
+                            <li>200g de chocolat</li>
+                            <li>200g de chocolat</li>
+                        </ul>
+                        <button onclick=\"window.location.href='./contact'\" class=\"btn contact-button lifted\">Nous
+                            Contacter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+";
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "pages/services.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  70 => 6,  63 => 5,  52 => 3,  41 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("{% extends 'layout/base.html.twig' %}
+
+{% block title %}Nos Services{% endblock %}
+
+{% block content %}
+    <main>
+
+        <div class=\"banner\">
+            <img src=\"/assets/images/page-content/services-banner.jpg\" alt=\"\" class=\"banner-image\">
+            <div class=\"banner-title\">Nos Services</div>
+        </div>
+
+        <section class=\"services\">
+
+            <div class=\"service-item\">
+                <img class=\"img-desc\" src=\"https://cycles-jv-fenioux.com/wp-content/uploads/2023/03/23.jpg\"
+                     alt=\"Assistance électrique\">
+                <div class=\"desc-service\">
+                    <h1>Assistance électrique</h1>
+                    <h3>Pour faciliter le pédalage, l'équipe des Cycles JV & Fenioux vous propose d'installer une
+                        assistance électrique sur tous types de vélos.</h3>
+                    <p>Le moteur se met en marche automatiquement lorsque l'on pédale (et se coupe lorsque le pédalage
+                        s'arrête). L'assistance électrique permet d'atteindre sans effort une vitesse de 25km/h, de
+                        grimper facilement les côtes ou d'effectuer des trajets qui seraient trop longs à parcourir avec
+                        un vélo classique.</p>
+                    <p>Que vous souhaitiez profiter d'une activité physique, d'envisager votre vélo comme moyen de
+                        mobilité au quotidien pour des parcours longs ou tout simplement d'améliorer vos performances
+                        lors de vos sorties, nous vous recommandons vivement l'assistance électrique.</p>
+                    <button onclick=\"window.location.href='./contact'\" class=\"btn contact-button\">Prendre
+                        rendez-vous
+                    </button>
+                </div>
+            </div>
+
+            <div class=\"service-item reverse\">
+                <img class=\"img-desc\" src=\"https://cycles-jv-fenioux.com/wp-content/uploads/2023/03/24.jpg\"
+                     alt=\"Entretien vélomobile\">
+                <div class=\"desc-service\">
+                    <h1>Entretien de vélomobile et réglages</h1>
+                    <h3>Nous intervenons sur tout cas de figure.</h3>
+                    <p>Qu'il s'agisse de remplacer un pneu ou de faire une grande révision des 100 000 km (oui, en
+                        vélomobile, c'est courant !) nous avons les outils et toutes les compétences pour ces missions
+                        !</p>
+                    <p>Vous n'êtes pas un ami de la mécanique ? Vous avez acheté un vélomobile d'occasion et vous
+                        souhaitez repartir serein ? Vous souhaitez vendre votre vélomobile dans le meilleur état
+                        possible ? Vous avez un doute sur le bon réglage de votre vélomobile ? Prenez rendez-vous avec
+                        notre équipe !</p>
+                    <button onclick=\"window.location.href='./products'\" class=\"btn contact-button spaced\">
+                        Découvrez nos vélos
+                    </button>
+                </div>
+            </div>
+
+            <div class=\"service-item third\">
+                <img class=\"img-desc fixed-height\" src=\"https://cycles-jv-fenioux.com/wp-content/uploads/2023/03/25.jpg\"
+                     alt=\"Réparations vélos\">
+                <div class=\"desc-service\">
+                    <h1>Réparations</h1>
+                    <h3>En collaboration avec différents partenaires, nous pouvons vous proposer des solutions de
+                        réparation complètes.</h3>
+                    <div class=\"position-right\">
+                        <ul>
+                            <li>1 artichaut</li>
+                            <li>De l'essuie-tout</li>
+                            <li>De l'essuie-tout</li>
+                            <li>200g de chocolat</li>
+                            <li>200g de chocolat</li>
+                        </ul>
+                        <button onclick=\"window.location.href='./contact'\" class=\"btn contact-button lifted\">Nous
+                            Contacter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+{% endblock %}", "pages/services.html.twig", "C:\\Users\\Lilian\\PhpstormProjects\\MobileBike\\src\\App\\View\\pages\\services.html.twig");
+    }
+}

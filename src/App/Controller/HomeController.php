@@ -14,9 +14,9 @@ class HomeController extends AbstractController
 {
     private UserRepository $userRepository;
 
-    public function __construct(ContainerInterface $container){
-        $this->container = $container;
-        $this->database = $this->container->get(Database::class);
+    public function __construct(View $view, Database $database){
+        $this->view = $view;
+        $this->database = $database;
         $this->userRepository = new UserRepository($this->database);
     }
 
@@ -26,7 +26,7 @@ class HomeController extends AbstractController
         return new Response(
             200,
             ['Content-Type' => 'text/html'],
-            View::twig('pages/home.html.twig', ['user' => $user])
+            $this->view->twig('pages/home.html.twig', ['user' => $user])
         );
     }
 }

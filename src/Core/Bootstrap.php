@@ -2,87 +2,141 @@
 
 namespace MobileBike\Core;
 
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use HttpSoft\Emitter\SapiEmitter;
 use MobileBike\Core\Container\Container;
 use MobileBike\Core\Database\Database;
-use MobileBike\Core\Exception\NotFoundException;
-use MobileBike\Core\Http\Middleware\MiddlewareHandler;
+use MobileBike\Core\Exception\ExceptionHandler;
+use MobileBike\Core\Middleware\ExceptionMiddleware;
+use MobileBike\Core\Exception\Exceptions\NotFoundException;
+use MobileBike\Core\Middleware\MiddlewareHandler;
 use MobileBike\Core\Routing\RouteLoader;
 use MobileBike\Core\Routing\Router;
+use MobileBike\Core\View\View;
 use PDO;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Twig\Environment;
 
 /**
  * Classe Bootstrap - Point d'entrée principal du framework MobileBike
- *
- * Responsable de l'initialisation complète de l'application :
- * - Configuration du container d'injection de dépendances
- * - Enregistrement des services core et database
- * - Gestion du routage et des middlewares
- * - Traitement des requêtes HTTP et gestion des erreurs
  */
 class Bootstrap
 {
     private Router $router;
     private SapiEmitter $emitter;
     private Container $container;
+    private array $globalMiddlewares = []; // Middlewares globaux
 
     /**
      * Initialise l'application avec tous ses composants
-     *
-     * @return self Instance configurée de Bootstrap
      */
     public static function init(): self
     {
-        // Auto instantiation
         $app = new self();
-
-        // Création d'une Session
         session_start();
-
-        // Chargement des variables d'environnement
         self::loadEnvironment();
 
-        // Creation du container
         $container = new Container();
         $app->container = $container;
 
-        // Configuration des services core
+        // Configuration des services
         self::registerCoreServices($container);
-
-        // Configuration de la base de données
         self::registerDatabaseServices($container);
+        self::registerExceptionServices($container);
 
-        // CONTAINER GET
+        // Récupération des services
         $app->router = $container->get(Router::class);
         $app->emitter = $container->get(SapiEmitter::class);
 
-        // Charger les routes
+        // Configuration des middlewares globaux
+        $app->configureGlobalMiddlewares();
+
+        // Chargement des routes
         RouteLoader::loadSafely(__DIR__ . '/../config/routes.php', $app->router);
 
         return $app;
     }
 
     /**
+     * Configure les middlewares globaux de l'application
+     */
+    private function configureGlobalMiddlewares(): void
+    {
+        // Middleware d'exception (doit être le premier pour capturer toutes les erreurs)
+        $this->addGlobalMiddleware(ExceptionMiddleware::class);
+
+        // Autres middlewares globaux possibles
+        // $this->addGlobalMiddleware(CorsMiddleware::class);
+        // $this->addGlobalMiddleware(AuthMiddleware::class);
+    }
+
+    /**
+     * Ajoute un middleware global
+     */
+    public function addGlobalMiddleware(string $middlewareClass): void
+    {
+        $this->globalMiddlewares[] = $middlewareClass;
+    }
+
+    /**
+     * Enregistre les services liés aux exceptions
+     */
+    private static function registerExceptionServices(Container $container): void
+    {
+        // Logger (vous pouvez adapter selon votre implémentation)
+        $container->singleton(LoggerInterface::class, function () {
+            // Exemple avec Monolog
+            $logger = new \Monolog\Logger('mobilebike');
+            $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../../var/logs/app.log'));
+            return $logger;
+        });
+
+        // Twig Environment (si pas déjà configuré)
+        $container->singleton(Environment::class, function () {
+            $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../App/View');
+            return new Environment($loader, [
+                'cache' => __DIR__ . '/../../var/cache/twig',
+                'debug' => $_ENV['APP_DEBUG'] ?? false,
+            ]);
+        });
+
+        // ExceptionHandler
+        $container->singleton(ExceptionHandler::class, function ($container) {
+            return new ExceptionHandler(
+                $container->get(LoggerInterface::class),
+                $container->get(View::class),
+                (bool) ($_ENV['APP_DEBUG'] ?? false)
+            );
+        });
+
+        // ExceptionMiddleware
+        $container->singleton(ExceptionMiddleware::class, function ($container) {
+            return new ExceptionMiddleware(
+                $container->get(ExceptionHandler::class)
+            );
+        });
+    }
+
+    /**
      * Enregistre les services core du framework
-     *
-     * @param Container $container Container d'injection de dépendances
      */
     private static function registerCoreServices(Container $container): void
     {
-        // Router - Singleton pour une instance unique
         $container->singleton(Router::class, function () {
             return new Router();
         });
 
-        // Emitter - Pour l'émission des réponses HTTP
         $container->singleton(SapiEmitter::class, function () {
             return new SapiEmitter();
         });
 
-        // Container lui-même pour injection dans d'autres services
+        $container->singleton(View::class, function ($container) {
+            return new View(
+                $container->get(Environment::class)
+            );
+        });
+
         $container->set(ContainerInterface::class, function ($container) {
             return $container;
         });
@@ -90,166 +144,113 @@ class Bootstrap
 
     /**
      * Enregistre les services liés à la base de données
-     *
-     * @param Container $container Container d'injection de dépendances
      */
     private static function registerDatabaseServices(Container $container): void
     {
-        // Configuration Database avec les variables d'environnement
         $container->singleton(Database::class, function () {
-            $config = [
-                'driver' => $_ENV['DB_DRIVER'] ?? 'mysql',
-                'host' => $_ENV['DB_HOST'] ?? 'localhost',
-                'database' => $_ENV['DB_NAME'] ?? '',
-                'username' => $_ENV['DB_USER'] ?? '',
-                'password' => $_ENV['DB_PASSWORD'] ?? '',
-                'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
-                'port' => $_ENV['DB_PORT'] ?? 3306,
-                'options' => [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                    PDO::ATTR_PERSISTENT => filter_var($_ENV['DB_PERSISTENT'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . ($_ENV['DB_CHARSET'] ?? 'utf8mb4')
-                ]
-            ];
-
-            return new Database($config);
+            return new Database();
         });
 
-        // Alias 'db' pour un accès plus simple
-        $container->set('db', function ($container) {
+        $container->set('database', function ($container) {
             return $container->get(Database::class);
         });
 
-        // PDO direct si nécessaire pour des requêtes spécifiques
         $container->singleton(PDO::class, function ($container) {
             return $container->get(Database::class)->getPdo();
         });
     }
 
     /**
-     * Retourne le container pour accès externe si nécessaire
-     *
-     * @return Container Instance du container d'injection de dépendances
-     */
-    public function getContainer(): Container
-    {
-        return $this->container;
-    }
-
-    /**
-     * Lance l'application et traite la requête HTTP entrante
-     *
-     * Processus :
-     * 1. Création de la requête depuis les globals PHP
-     * 2. Matching de la route correspondante
-     * 3. Résolution du controller et exécution via les middlewares
-     * 4. Émission de la réponse HTTP
-     * 5. Gestion des erreurs (404, 500)
+     * Lance l'application - VERSION SIMPLIFIÉE avec middleware d'exception
      */
     public function run(): void
     {
         $request = ServerRequest::fromGlobals();
 
+        // Recherche de la route
+        $routeMatch = $this->router->match_request($request);
+
+        if ($routeMatch === null) {
+            throw new NotFoundException('Route non trouvée');
+        }
+
+        $route = $routeMatch->getRoute();
+        $params = $routeMatch->getParameters();
+
+        // Construction de la chaîne de middlewares
+        $middlewareHandler = new MiddlewareHandler();
+
+        // 1. Ajout des middlewares globaux (exception en premier)
+        foreach ($this->globalMiddlewares as $globalMiddleware) {
+            $middlewareInstance = $this->container->get($globalMiddleware);
+            $middlewareHandler->addMiddleware($middlewareInstance);
+        }
+
+        // 2. Ajout des middlewares spécifiques à la route
+        $routeMiddlewares = method_exists($route, 'getMiddlewares') ? $route->getMiddlewares() : [];
+        foreach ($routeMiddlewares as $middleware) {
+            $middlewareHandler->addMiddleware($middleware);
+        }
+
+        // 3. Configuration du controller final
+        $handler = $route->getHandler();
+        if (is_string($handler) && str_contains($handler, '@')) {
+            [$controllerClass, $method] = explode('@', $handler, 2);
+
+            if (!str_contains($controllerClass, '\\')) {
+                $controllerClass = 'MobileBike\\App\\Controller\\' . $controllerClass;
+            }
+
+            $controller = $this->resolveController($controllerClass);
+
+            $middlewareHandler->setController(function ($request) use ($controller, $method, $params) {
+                return $controller->$method($request, $params);
+            });
+        } else {
+            throw new \InvalidArgumentException('Format de handler non supporté');
+        }
+
+        // 4. Exécution de la chaîne complète et émission
+        $response = $middlewareHandler->handle($request);
+        $this->emitter->emit($response);
+    }
+
+    /**
+     * Alternative : Lance l'application - VERSION AVEC TRY/CATCH pour compatibilité
+     */
+    public function runWithFallback(): void
+    {
         try {
-            // Recherche de la route correspondant à la requête
-            $routeMatch = $this->router->match_request($request);
-
-            if ($routeMatch === null) {
-                throw new NotFoundException('Route non trouvée');
-            }
-
-            $route = $routeMatch->getRoute();
-            $params = $routeMatch->getParameters();
-
-            // Récupération des middlewares de la route si disponibles
-            $middlewares = method_exists($route, 'getMiddlewares') ? $route->getMiddlewares() : [];
-
-            // Configuration de la chaîne de middlewares
-            $middlewareHandler = new MiddlewareHandler();
-            foreach ($middlewares as $middleware) {
-                $middlewareHandler->addMiddleware($middleware);
-            }
-
-            // Analyse du handler au format "Controller@method"
-            $handler = $route->getHandler();
-            if (is_string($handler) && str_contains($handler, '@')) {
-                [$controllerClass, $method] = explode('@', $handler, 2);
-
-                // Ajout du namespace complet si nécessaire
-                if (!str_contains($controllerClass, '\\')) {
-                    $controllerClass = 'MobileBike\\App\\Controller\\' . $controllerClass;
-                }
-
-                // Résolution du controller via le container pour l'injection de dépendances
-                $controller = $this->resolveController($controllerClass);
-
-                // Configuration du controller final dans la chaîne de middlewares
-                $middlewareHandler->setController(function ($request) use ($controller, $method, $params) {
-                    return $controller->$method($request, $params);
-                });
-            } else {
-                throw new \InvalidArgumentException('Format de handler non supporté');
-            }
-
-            // Exécution de la chaîne de middlewares et émission de la réponse
-            $response = $middlewareHandler->handle($request);
+            $this->run();
+        } catch (\Throwable $e) {
+            // Fallback si le middleware d'exception n'a pas capturé l'erreur
+            $exceptionHandler = $this->container->get(ExceptionHandler::class);
+            $request = ServerRequest::fromGlobals();
+            $response = $exceptionHandler->handle($e, $request);
             $this->emitter->emit($response);
-
-        } catch (NotFoundException $e) {
-            // Gestion des erreurs 404
-            $response = new Response(
-                404,
-                ['Content-Type' => 'text/html'],
-                '<h1>404 - Page non trouvée</h1>'
-            );
-            $this->emitter->emit($response);
-        } catch (\Exception $e) {
-            // Gestion des erreurs générales (500)
-            $response = new Response(
-                500,
-                ['Content-Type' => 'text/html'],
-                '<h1>500 - Erreur interne du serveur</h1>'
-            );
-            $this->emitter->emit($response);
-
-            // Log de l'erreur pour le debugging
-            error_log($e->getMessage() . "\n" . $e->getTraceAsString());
         }
     }
 
     /**
-     * Résout un controller en utilisant le container pour l'injection de dépendances
-     *
-     * Stratégie de résolution :
-     * 1. Tentative via le container si déjà enregistré
-     * 2. Enregistrement automatique puis résolution
-     * 3. Fallback : instanciation manuelle
-     *
-     * @param string $controllerClass Nom complet de la classe du controller
-     * @return object Instance du controller résolu
+     * Résout un controller
      */
     private function resolveController(string $controllerClass): object
     {
         try {
-            // Vérification si le controller est déjà enregistré dans le container
             if ($this->container->has($controllerClass)) {
                 return $this->container->get($controllerClass);
             }
 
-            // Enregistrement automatique puis résolution
             $this->container->set($controllerClass, $controllerClass);
             return $this->container->get($controllerClass);
 
         } catch (\Exception $e) {
-            // Solution de repli : instanciation manuelle sans injection
             return new $controllerClass();
         }
     }
 
     /**
-     * Charge les variables d'environnement depuis le fichier .env
+     * Charge les variables d'environnement
      */
     private static function loadEnvironment(): void
     {

@@ -18,12 +18,11 @@ class Database implements DatabaseInterface
     /**
      * Constructeur qui accepte la configuration de la base de données
      *
-     * @param array $config Configuration de la base de données
      * @throws Exception Si la connexion échoue
      */
-    public function __construct(array $config = [])
+    public function __construct()
     {
-        $this->config = array_merge($this->getDefaultConfig(), $config);
+        $this->config = $this->getDefaultConfig();
         $this->connect();
     }
 
@@ -71,16 +70,19 @@ class Database implements DatabaseInterface
     private function getDefaultConfig(): array
     {
         return [
-            'driver' => 'mysql',
+            'driver' => $_ENV['DB_DRIVER'] ?? 'mysql',
             'host' => $_ENV['DB_HOST'] ?? 'localhost',
             'database' => $_ENV['DB_NAME'] ?? '',
             'username' => $_ENV['DB_USER'] ?? '',
             'password' => $_ENV['DB_PASSWORD'] ?? '',
-            'charset' => 'utf8mb4',
+            'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
+            'port' => $_ENV['DB_PORT'] ?? 3306,
             'options' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::ATTR_PERSISTENT => filter_var($_ENV['DB_PERSISTENT'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . ($_ENV['DB_CHARSET'] ?? 'utf8mb4')
             ]
         ];
     }

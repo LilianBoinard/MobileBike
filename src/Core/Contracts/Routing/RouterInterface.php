@@ -2,7 +2,7 @@
 
 namespace MobileBike\Core\Contracts\Routing;
 
-use MobileBike\Core\Exception\RouterException;
+use MobileBike\Core\Exception\Exceptions\RouterException;
 use MobileBike\Core\Routing\RouteMatch;
 use Psr\Http\Message\ServerRequestInterface;
 

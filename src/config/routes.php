@@ -26,6 +26,7 @@ $router->get('/about', 'AboutController@index')->name('about');
 $router->get('/services', 'ServicesController@index')->name('services');
 $router->get('/products', 'ProductsController@index')->name('products');
 $router->get('/contact', 'ContactController@index')->name('contact');
+$router->get('/login', 'LoginController@index')->name('login');
 $router->get('/test/{id}', 'TestController@index')
     ->where(['id' => '\d+'])
     ->name('test');

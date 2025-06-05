@@ -4,7 +4,7 @@ namespace MobileBike\Core\Routing;
 
 use MobileBike\Core\Contracts\Routing\RouteInterface;
 use MobileBike\Core\Contracts\Routing\RouterInterface;
-use MobileBike\Core\Exception\RouterException;
+use MobileBike\Core\Exception\Exceptions\RouterException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

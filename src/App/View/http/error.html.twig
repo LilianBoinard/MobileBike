@@ -1,0 +1,9 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block title %}Non trouvée{% endblock %}
+
+{% block content %}
+    <main class="error-page">
+        <h1>Erreur {% if debug %} {{ status_code }} {% endif %} : {{ message }}</h1>
+    </main>
+{% endblock %}

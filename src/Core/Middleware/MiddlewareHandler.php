@@ -1,10 +1,10 @@
 <?php
 
-namespace MobileBike\Core\Http\Middleware;
+namespace MobileBike\Core\Middleware;
 
 use MobileBike\Core\Contracts\Middleware\MiddlewareInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Gestionnaire de middlewares - Implémentation du pattern Chain of Responsibility

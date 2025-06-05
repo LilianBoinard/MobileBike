@@ -3,25 +3,18 @@
 namespace MobileBike\Core\View;
 
 use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class View
 {
-    private static ?Environment $twig = null;
+    private Environment $twig;
 
-    private static function getTwig(): Environment
+    public function __construct(Environment $twig)
     {
-        if (self::$twig === null) {
-            $loader = new FilesystemLoader(dirname(__DIR__, 2) . '/App/View');
-            self::$twig = new Environment($loader);
-        }
-        return self::$twig;
+        $this->twig = $twig;
     }
 
-    public static function twig(string $template, array $data = [], array $options = []): string
+    public function twig(string $template, array $data = []): string
     {
-        $loader = new FilesystemLoader(dirname(__DIR__, 2) . '/App/View');
-        $twig = new Environment($loader, $options);
-        return $twig->render($template, $data);
+        return $this->twig->render($template, $data);
     }
 }

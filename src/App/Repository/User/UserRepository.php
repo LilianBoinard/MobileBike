@@ -9,7 +9,7 @@ use PDO;
 
 class UserRepository extends AbstractRepository
 {
-    protected string $table = 'users';
+    protected string $table = 'user_';
     protected string $entityClass = User::class;
 
     public function __construct(Database $database)
@@ -47,6 +47,7 @@ class UserRepository extends AbstractRepository
         }
 
         if ($entity->id) {
+
             // Mise à jour
 
             $sql = "

@@ -3,7 +3,7 @@
 namespace MobileBike\Core\Routing;
 
 use MobileBike\Core\Contracts\Routing\RouteLoaderInterface;
-use MobileBike\Core\Exception\RouteLoaderException;
+use MobileBike\Core\Exception\Exceptions\RouteLoaderException;
 
 /**
  * Chargeur de routes PHP simple

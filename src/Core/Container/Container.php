@@ -2,10 +2,9 @@
 
 namespace MobileBike\Core\Container;
 
-use MobileBike\Core\Exception\ContainerException;
-use MobileBike\Core\Exception\NotFoundException;
-
 use MobileBike\Core\Contracts\Container\ExtendedContainerInterface;
+use MobileBike\Core\Exception\Exceptions\ContainerException;
+use MobileBike\Core\Exception\Exceptions\NotFoundException;
 
 
 /**

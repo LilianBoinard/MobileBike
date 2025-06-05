@@ -37,4 +37,14 @@ abstract class AbstractRepository implements RepositoryInterface
         $stmt = $this->database->prepare("DELETE FROM {$this->table} WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
+
+    public function available(string $column, mixed $value): bool
+    {
+        $sql = "SELECT 1 FROM {$this->table} WHERE {$column} = :value LIMIT 1";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute(['value' => $value]);
+
+        return $stmt->fetchColumn() === false;
+    }
+
 }

@@ -2,7 +2,7 @@
 
 namespace MobileBike\Core\Contracts\Routing;
 
-use MobileBike\Core\Exception\RouteLoaderException;
+use MobileBike\Core\Exception\Exceptions\RouteLoaderException;
 use MobileBike\Core\Routing\Router;
 
 /**

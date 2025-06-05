@@ -1,0 +1,77 @@
+@use 'sass:color';
+@use "../../theme" as theme;
+
+.login-page {
+
+  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  height: 100vh;
+
+  h1 {
+    text-align: center;
+    color: black;
+  }
+
+  .login-container {
+    margin-top: 4rem;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: theme.$color-background;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: theme.$color-primary;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      input {
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 1rem;
+
+        &:focus {
+          outline: none;
+          border-color: theme.$color-primary;
+          box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+      }
+    }
+
+    button {
+      padding: 0.8rem;
+      background-color: theme.$color-primary;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background-color: color.adjust(theme.$color-primary, $lightness: -10%);
+      }
+    }
+  }
+}
