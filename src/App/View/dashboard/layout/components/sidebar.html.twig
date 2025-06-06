@@ -1,0 +1,26 @@
+<div class="sidebar sidebar-dark" id="sidebar">
+    <div class="sidebar-header">
+        <a href=".." class="sidebar-logo">
+            <img src="/assets/images/LogoMobileBike.png" alt="Mobile Bike Logo">
+        </a>
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <ul class="sidebar-menu">
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-item-link active">
+                <span class="sidebar-item-icon"><i class="fas fa-home"></i></span>
+                <span class="sidebar-item-text">Accueil</span>
+            </a>
+        </li>
+        <!-- Autres items -->
+    </ul>
+</div>
+
+<script>
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('sidebar-collapsed');
+    });
+</script>

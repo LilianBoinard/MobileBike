@@ -204,4 +204,43 @@
       display: block;
     }
   }
+
+  .dashboard-footer {
+    width: 100%;
+    margin-left: 0;
+    position: relative; // Change pour le mobile si nécessaire
+
+    .sidebar-collapsed ~ & {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    &-copyright {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  .sidebar {
+    width: 70px !important; // Force collapsed state
+    pointer-events: none; // Désactive les interactions
+
+    // Cache les textes et centre les icônes
+    &-logo,
+    &-item-text {
+      display: none !important;
+    }
+
+    &-item-link {
+      justify-content: center !important;
+    }
+
+    &-item-icon {
+      margin-right: 0 !important;
+    }
+  }
+
+  .main-content {
+    margin-left: 70px !important;
+  }
 }

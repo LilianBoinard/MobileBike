@@ -1,0 +1,66 @@
+@use '../../theme';
+@use "../button";
+
+.dashboard-footer {
+  $self: &;
+  width: calc(100% - #{theme.$sidebar-width});
+  margin-left: #{theme.$sidebar-width};
+  position: fixed;
+  bottom: 0;
+  background-color: theme.$color-background;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  transition: all theme.$transition-speed ease;
+  z-index: 90; // En dessous de la sidebar mais au-dessus du contenu
+
+  // Quand la sidebar est réduite
+  .sidebar-collapsed ~ & {
+    width: calc(100% - #{theme.$collapsed-width});
+    margin-left: #{theme.$collapsed-width};
+  }
+
+  &-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: theme.$color-surface;
+    border-top: 1px solid theme.$color-border;
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+  }
+
+  &-question {
+    font-size: theme.$font-size-extra-large;
+    font-weight: bold;
+    color: theme.$color-text;
+
+    @media (max-width: 768px) {
+      font-size: theme.$font-size-large;
+      text-align: center;
+    }
+  }
+
+  &-contact-button {
+    @extend .cta-button;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  &-copyright {
+    width: inherit; // Hérite de la largeur du parent
+    margin-left: inherit; // Hérite du décalage de la sidebar
+    text-align: center;
+    padding: 0.75rem 0;
+    font-weight: theme.$font-weight-bold;
+    color: theme.$color-text;
+    background-color: theme.$color-background;
+    font-size: theme.$font-size-small;
+    border-top: 1px solid theme.$color-border;
+  }
+}

@@ -29,6 +29,7 @@ $router->get('/contact', 'ContactController@index')->name('contact');
 $router->get('/login', 'LoginController@index')->name('login');
 $router->post('/login', 'UserController@attemptLogin')->name('login');
 $router->get('/logout', 'UserController@attemptLogout')->name('logout');
+$router->get('/dashboard', 'DashboardController@index')->name('dashboard');
 $router->get('/test/{id}', 'TestController@index')
     ->where(['id' => '\d+'])
     ->name('test');

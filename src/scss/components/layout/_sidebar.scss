@@ -1,0 +1,128 @@
+@use '../../theme';
+
+.sidebar {
+  $self: &;
+  --sidebar-width: 250px;
+  --collapsed-width: 70px;
+  --transition-speed: 0.3s;
+
+  position: fixed;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: theme.$color-background;
+  color: white;
+  transition: width var(--transition-speed);
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+
+  &-header {
+    padding: 1.5rem;
+    background: theme.$color-surface;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height, 70px);
+  }
+
+  &-logo {
+    display: block;
+    img {
+      height: 4rem;
+      width: 8rem;
+      display: block;
+    }
+  }
+
+  &-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.25rem;
+  }
+
+  &-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    height: calc(100vh - var(--header-height, 70px));
+  }
+
+  &-item {
+    position: relative;
+
+    &-link {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: inherit;
+      text-decoration: none;
+      transition: background-color var(--transition-speed);
+
+      &:hover {
+        background-color: var(--sidebar-hover, #34495e);
+      }
+
+      &.active {
+        background-color: theme.$color-secondary;
+      }
+    }
+
+    &-icon {
+      margin-right: 1rem;
+      font-size: 1.2rem;
+      min-width: 1.5rem;
+      text-align: center;
+    }
+
+    &-text {
+      white-space: nowrap;
+    }
+  }
+
+  &-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-speed);
+    background: rgba(0, 0, 0, 0.1);
+
+    &-item {
+      padding-left: 2.5rem;
+    }
+  }
+
+  // Sidebar réduite
+  &-collapsed {
+    width: var(--collapsed-width);
+
+    #{$self}-logo img {
+      display: none;
+    }
+
+    #{$self}-item-text {
+      display: none;
+    }
+
+    #{$self}-item-link {
+      justify-content: center;
+    }
+
+    #{$self}-item-icon {
+      margin-right: 0;
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// Décalage du contenu principal
+.main-content {
+  margin-left: var(--sidebar-width);
+  transition: margin-left var(--transition-speed);
+
+  body.sidebar-collapsed & {
+    margin-left: var(--collapsed-width);
+  }
+}

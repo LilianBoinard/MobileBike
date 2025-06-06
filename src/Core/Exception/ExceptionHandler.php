@@ -120,7 +120,7 @@ class ExceptionHandler
         try {
             $html = $this->view->twig($template, $data);
         } catch (\Exception $e) {
-            $html = $this->view->twig('http/error.html.twig', $data);
+            $html = $this->view->twig('pages/error.html.twig', $data);
         }
 
         return new Response(
