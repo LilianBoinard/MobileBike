@@ -43,43 +43,47 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
 
     public function save(object $entity): bool
     {
-
         if (!$entity instanceof User) {
             throw new \InvalidArgumentException('L\'entité doit être une instance de User');
         }
 
-        if ($entity->id) {
-
+        if ($entity->id_user) {
             // Mise à jour
-
             $sql = "
-                        UPDATE {$this->table} 
-                        SET username = :username, password = :passowrd, email = :email
-                        WHERE id = :id";
+                UPDATE {$this->table} 
+                SET username = :username, 
+                    password = :password, 
+                    email = :email,
+                    profile_image = :profile_image
+                WHERE id_user = :id_user";
+
             $stmt = $this->database->prepare($sql);
             return $stmt->execute([
-                'id' => $entity->id,
+                'id_user' => $entity->id_user,
                 'username' => $entity->username,
-                'password' => password_hash($entity->password, PASSWORD_BCRYPT),
+                'password' => $entity->password,
                 'email' => $entity->email,
+                'profile_image' => $entity->profileImage
             ]);
         }
 
-        // Creation
-
+        // Création
         $sql = "
-                    INSERT INTO {$this->table} (username, password, email, created) 
-                    VALUES (:username, :password, :email, NOW())";
+            INSERT INTO {$this->table} 
+                (username, password, email, created, profile_image) 
+            VALUES 
+                (:username, :password, :email, NOW(), :profile_image)";
 
         $stmt = $this->database->prepare($sql);
         $result = $stmt->execute([
             'username' => $entity->username,
             'password' => password_hash($entity->password, PASSWORD_BCRYPT),
             'email' => $entity->email,
+            'profile_image' => $entity->profileImage
         ]);
 
         if ($result) {
-            $entity->id = (int)$this->database->lastInsertId();
+            $entity->id_user = (int)$this->database->lastInsertId();
         }
 
         return $result;
@@ -104,5 +108,4 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
 
         return (bool)$stmt->fetchColumn();
     }
-
 }

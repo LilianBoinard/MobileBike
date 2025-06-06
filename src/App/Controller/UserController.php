@@ -12,10 +12,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class UserController extends AbstractController
 {
-    public function __construct(View $view, Database $database, SessionAuthentication $authentication)
+    public function __construct(View $view, SessionAuthentication $authentication)
     {
         $this->view = $view;
-        $this->database = $database;
         $this->authentication = $authentication;
     }
 

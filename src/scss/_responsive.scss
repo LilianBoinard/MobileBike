@@ -208,7 +208,6 @@
   .dashboard-footer {
     width: 100%;
     margin-left: 0;
-    position: relative; // Change pour le mobile si nécessaire
 
     .sidebar-collapsed ~ & {
       width: 100%;

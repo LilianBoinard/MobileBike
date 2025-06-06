@@ -46,10 +46,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; // Ajouté pour s'assurer que l'image ne dépasse pas du cadre
+    padding: 2px; // Optionnel: pour créer une marge intérieure si nécessaire
 
     img {
-      width: 20px;
-      height: 20px;
+      width: 100%; // L'image prendra toute la largeur disponible
+      height: 100%; // L'image prendra toute la hauteur disponible
+      object-fit: cover; // Garantit que l'image couvre tout l'espace sans déformation
+      border-radius: 50%; // Optionnel: pour un effet supplémentaire si l'image a des coins
     }
   }
 

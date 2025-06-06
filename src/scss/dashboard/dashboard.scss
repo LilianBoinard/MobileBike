@@ -1,0 +1,8 @@
+@use '../theme';
+
+.dashboard-content {
+  margin-left: 90px;
+  margin-top: 2rem;
+  transition: margin-left theme.$transition-speed ease;
+  will-change: margin-left;
+}

@@ -4,7 +4,7 @@ namespace MobileBike\App\Controller;
 
 use GuzzleHttp\Psr7\Response;
 use MobileBike\App\Repository\User\UserRepository;
-use MobileBike\Core\Database\Database;
+use MobileBike\Core\Contracts\Authentication\AuthenticationInterface;
 use MobileBike\Core\View\View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,15 +13,14 @@ class HomeController extends AbstractController
 {
     private UserRepository $userRepository;
 
-    public function __construct(View $view, Database $database){
+    public function __construct(View $view, AuthenticationInterface $authentication){
         $this->view = $view;
-        $this->database = $database;
-        $this->userRepository = new UserRepository($this->database);
+        $this->authentication = $authentication;
     }
 
     public function index(ServerRequestInterface $request): ResponseInterface
     {
-        $user = $this->userRepository->findByUsername('admin');
+        $user = $this->authentication->user();
         return new Response(
             200,
             ['Content-Type' => 'text/html'],
