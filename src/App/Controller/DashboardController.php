@@ -24,7 +24,7 @@ class DashboardController extends AbstractController
 
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        if (!$user){
+        if (empty($user)){
             throw new UnauthorizedException();
         }
 

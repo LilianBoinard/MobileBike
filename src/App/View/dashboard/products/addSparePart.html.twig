@@ -1,0 +1,36 @@
+{% extends 'dashboard/layout/dashboard-base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+    <h1>Ajouter une Pièce Détaché</h1>
+
+    <form class="form">
+
+        <div class="form-group">
+            <label for="name" class="form-label">Modèle</label>
+            <input type="text" id="name" class="form-control" placeholder="Assioma PRO MX-2" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" id="description" class="form-control" placeholder="Assioma PRO MX est la pédale de puissance ultime">
+        </div>
+
+        <div class="form-group">
+            <label for="price" class="form-label">Prix</label>
+            <input type="number" id="price" class="form-control" placeholder="756,29">
+        </div>
+
+        <div class="form-check-group">
+            <label class="form-check">
+                <span class="form-check-label">En stock ?</span>
+                <input type="checkbox" id="stock" class="form-check-input" checked>
+
+            </label>
+        </div>
+
+        <button type="submit" class="form-submit">Ajouter</button>
+    </form>
+{% endblock %}

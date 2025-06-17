@@ -1,0 +1,139 @@
+{% extends 'dashboard/layout/dashboard-base.html.twig' %}
+
+{% block title %}Gestion des Produits - Dashboard{% endblock %}
+
+{% block content %}
+    <div class="products-dashboard">
+        <!-- En-tête du dashboard -->
+        <div class="dashboard-header">
+            <h1>Gestion des Produits</h1>
+            <div>
+                <a href="/dashboard/products/mobilebike/add" class="add-product-btn">
+                    <i data-feather="plus"></i>
+                    Ajouter un Vélo Mobile
+                </a>
+                <a href="/dashboard/products/sparepart/add" class="add-product-btn">
+                    <i data-feather="plus"></i>
+                    Ajouter une Pièce Détachée
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Section des filtres -->
+        <div class="filters-section">
+            <div class="filters-row">
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher un produit..." id="searchInput">
+                    <i data-feather="search" class="search-icon"></i>
+                </div>
+
+                <div class="filter-select">
+                    <select id="brandFilter">
+                        <option value="">Toutes les marques</option>
+                        {% for brand in brands %}
+                            <option value="{{ brand }}">{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-select">
+                    <select id="stockFilter">
+                        <option value="">Tous les stocks</option>
+                        <option value="in-stock">En stock</option>
+                        <option value="out-stock">Rupture</option>
+                    </select>
+                </div>
+
+                <div class="results-count">
+                    <span id="resultsCount">{{ products|length }} produits trouvés</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table des produits -->
+        <div class="products-table">
+            <div class="table-header">
+                <h3>Liste des Produits</h3>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Nom du produit</th>
+                        <th>Marque</th>
+                        <th>Prix</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td class="product-image">
+                                <img src="{{ product.image ? '/uploads/products/' ~ product.image : '/assets/images/default-bike.jpg' }}" alt="{{ product.name }}">
+                            </td>
+                            <td class="product-name">{{ product.name }}</td>
+                            <td>{{ product.brand }}</td>
+                            <td class="product-price">{{ product.price }}</td>
+                            <td>
+                                    <span class="stock-badge {{ product.stock ? 'in-stock' : 'out-stock' }}">
+                                        {{ product.stock ? 'En stock' : 'Rupture' }}
+                                    </span>
+                            </td>
+                            <td class="product-actions">
+                                <div class="actions-group">
+                                    <a href="/dashboard/products/mobilebike/view/{{ product.id_product }}" class="btn-view">
+                                        <i class="fa-solid fa-eye" data-feather="eye" aria-label="voir"></i>
+                                    </a>
+                                    <a href="/dashboard/products/mobilebike/edit/{{ product.id_product }}" class="btn-edit">
+                                        <i class="fa-solid fa-pencil" data-feather="edit" aria-label="modifier"></i>
+                                    </a>
+                                    <form action="/dashboard/products/delete/{{ product.id_product }}" method="POST" class="delete-form">
+                                        <button type="submit" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                                            <i class="fa-solid fa-trash" data-feather="trash-2" aria-label="supprimer"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="no-products">
+                                Aucun produit trouvé. <a href="/dashboard/products/mobilebike/add">Ajoutez-en un !</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if products|length > 0 %}
+            <div class="pagination">
+                {% if currentPage > 1 %}
+                    <a href="?page={{ currentPage - 1 }}" class="page-btn">
+                        <i class="fa-solid fa-chevron-left" data-feather="chevron-left"></i>
+                    </a>
+                {% endif %}
+
+                {% for page in 1..totalPages %}
+                    <a href="?page={{ page }}" class="page-btn {{ page == currentPage ? 'active' }}">
+                        {{ page }}
+                    </a>
+                {% endfor %}
+
+                <span class="page-info">Page {{ currentPage }} sur {{ totalPages }}</span>
+
+                {% if currentPage < totalPages %}
+                    <a href="?page={{ currentPage + 1 }}" class="page-btn">
+                        <i class="fa-solid fa-chevron-right" data-feather="chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

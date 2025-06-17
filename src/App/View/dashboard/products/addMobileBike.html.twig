@@ -1,0 +1,90 @@
+{% extends 'dashboard/layout/dashboard-base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+    <h1>Ajouter un Produit</h1>
+
+    <form class="form" action="/dashboard/products/mobilebike/add" method="POST" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label for="name" class="form-label">Modèle</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="ALPHA-9" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" id="description" name="description" class="form-control" placeholder="Une super vitesse...">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Image</label>
+            <div class="form-file-wrapper">
+                <input type="file" id="image-upload" name="image" class="form-file-input" accept="image/*">
+                <label for="image-upload" class="form-file-label">
+                    <div class="form-file-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+                            <line x1="16" y1="5" x2="22" y2="5"></line>
+                            <line x1="19" y1="2" x2="19" y2="8"></line>
+                            <circle cx="9" cy="9" r="2"></circle>
+                            <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                        </svg>
+                    </div>
+                    <span>Glissez-déposez votre image ici ou cliquez pour sélectionner</span>
+                    <span class="form-file-button">Choisir un fichier</span>
+                    <span class="form-file-filename" id="file-name">Aucun fichier sélectionné</span>
+                </label>
+                <img src="" alt="Aperçu de l'image" class="form-file-preview" id="image-preview">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="price" class="form-label">Prix</label>
+            <input type="number" id="price" name="price" class="form-control" placeholder="6000" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+            <label for="brand" class="form-label">Marque</label>
+            <input type="text" id="brand" name="brand" class="form-control" placeholder="Cattrike" required>
+        </div>
+
+        <div class="form-check-group">
+            <label class="form-check">
+                <span class="form-check-label">En stock ?</span>
+                <input type="checkbox" id="stock" name="stock" class="form-check-input" value="1" checked>
+            </label>
+        </div>
+
+        <button type="submit" class="form-submit">Ajouter</button>
+    </form>
+    <script>
+        document.getElementById('image-upload').addEventListener('change', function(e) {
+            const fileInput = e.target;
+            const fileName = document.getElementById('file-name');
+            const preview = document.getElementById('image-preview');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName.textContent = file.name;
+                fileName.classList.add('has-file');
+
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.classList.add('has-image');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                fileName.textContent = 'Aucun fichier sélectionné';
+                fileName.classList.remove('has-file');
+                preview.src = '';
+                preview.classList.remove('has-image');
+            }
+        });
+    </script>
+{% endblock %}

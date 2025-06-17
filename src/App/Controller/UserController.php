@@ -3,9 +3,7 @@
 namespace MobileBike\App\Controller;
 
 use GuzzleHttp\Psr7\Response;
-use MobileBike\App\Controller\AbstractController;
 use MobileBike\Core\Authentication\SessionAuthentication;
-use MobileBike\Core\Database\Database;
 use MobileBike\Core\View\View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

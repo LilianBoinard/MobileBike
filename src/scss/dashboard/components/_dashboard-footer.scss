@@ -1,0 +1,39 @@
+@use '../../theme';
+@use "../../components/button";
+
+.dashboard-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: calc(100% - 70px); // Prend en compte la sidebar réduite par défaut
+  margin-left: 70px; // Correspond à la sidebar réduite
+  z-index: 100;
+  background-color: theme.$color-background;
+  border-top: 1px solid theme.$color-border;
+  transition: all theme.$transition-speed ease;
+
+  // Quand la sidebar est étendue
+  .sidebar:not(.sidebar-collapsed) ~ .dashboard-content & {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+  }
+
+  &-copyright {
+    text-align: center;
+    padding: 0.75rem 0;
+    font-weight: theme.$font-weight-bold;
+    color: theme.$color-text;
+    font-size: theme.$font-size-small;
+  }
+}
+
+// Ajustement du contenu principal
+.dashboard-content {
+  padding-bottom: 60px; // Doit correspondre à la hauteur du footer
+  transition: margin-left theme.$transition-speed ease;
+  margin-left: 70px; // Correspond à la sidebar réduite par défaut
+
+  .sidebar:not(.sidebar-collapsed) ~ & {
+    margin-left: 250px;
+  }
+}

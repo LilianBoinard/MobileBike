@@ -6,7 +6,6 @@ use MobileBike\App\Model\User\User;
 use MobileBike\App\Repository\AbstractRepository;
 use MobileBike\App\Repository\Contracts\UserRepositoryInterface;
 use MobileBike\Core\Database\Database;
-use PDO;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface
 {
@@ -21,24 +20,12 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
 
     public function findByUsername(string $username): ?User
     {
-        $sql = "SELECT * FROM {$this->table} WHERE username = :username LIMIT 1";
-
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute(['username' => $username]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $this->entityClass);
-        $user = $stmt->fetch();
-        return $user ?: null;
+        return $this->findOneBy(['username' => $username]);
     }
 
     public function findByEmail(string $email): ?User
     {
-        $sql = "SELECT * FROM {$this->table} WHERE email = :email LIMIT 1";
-
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute(['email' => $email]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $this->entityClass);
-        $user = $stmt->fetch();
-        return $user ?: null;
+        return $this->findOneBy(['email' => $email]);
     }
 
     public function save(object $entity): bool
@@ -47,65 +34,75 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
             throw new \InvalidArgumentException('L\'entité doit être une instance de User');
         }
 
-        if ($entity->id_user) {
-            // Mise à jour
-            $sql = "
-                UPDATE {$this->table} 
-                SET username = :username, 
-                    password = :password, 
-                    email = :email,
-                    profile_image = :profile_image
-                WHERE id_user = :id_user";
+        return $this->executeInTransaction(function () use ($entity) {
+            if (!$entity->isNew()) {
+                // Mise à jour
+                $fields = [
+                    'username' => $entity->username,
+                    'password' => $entity->password,
+                    'email' => $entity->email,
+                    'profile_image' => $entity->profileImage
+                ];
 
-            $stmt = $this->database->prepare($sql);
-            return $stmt->execute([
-                'id_user' => $entity->id_user,
+                $sql = $this->buildUpdateQuery($fields);
+                $stmt = $this->database->prepare($sql);
+
+                // Ajouter la clé primaire pour la condition WHERE
+                $fields[$this->primaryKey] = $entity->id_user;
+
+                return $stmt->execute($fields);
+            }
+
+            // Création
+            $fields = [
                 'username' => $entity->username,
-                'password' => $entity->password,
+                'password' => password_hash($entity->password, PASSWORD_BCRYPT),
                 'email' => $entity->email,
-                'profile_image' => $entity->profileImage
-            ]);
-        }
+                'profile_image' => $entity->profileImage,
+                'created' => date('Y-m-d H:i:s')
+            ];
 
-        // Création
-        $sql = "
-            INSERT INTO {$this->table} 
-                (username, password, email, created, profile_image) 
-            VALUES 
-                (:username, :password, :email, NOW(), :profile_image)";
+            $sql = $this->buildInsertQuery($fields);
+            $stmt = $this->database->prepare($sql);
+            $result = $stmt->execute($fields);
 
-        $stmt = $this->database->prepare($sql);
-        $result = $stmt->execute([
-            'username' => $entity->username,
-            'password' => password_hash($entity->password, PASSWORD_BCRYPT),
-            'email' => $entity->email,
-            'profile_image' => $entity->profileImage
-        ]);
+            if ($result) {
+                $entity->id_user = (int)$this->database->lastInsertId();
+            }
 
-        if ($result) {
-            $entity->id_user = (int)$this->database->lastInsertId();
-        }
-
-        return $result;
+            return $result;
+        });
     }
 
     public function isClient(int $id): bool
     {
         $sql = "SELECT 1 FROM client WHERE id_user = :id_user LIMIT 1";
-
         $stmt = $this->database->prepare($sql);
         $stmt->execute(['id_user' => $id]);
-
         return (bool)$stmt->fetchColumn();
     }
 
     public function isAdministrator(int $id): bool
     {
         $sql = "SELECT 1 FROM administrator WHERE id_user = :id_user LIMIT 1";
-
         $stmt = $this->database->prepare($sql);
         $stmt->execute(['id_user' => $id]);
-
         return (bool)$stmt->fetchColumn();
+    }
+
+    /**
+     * Vérifie si un nom d'utilisateur est disponible
+     */
+    public function isUsernameAvailable(string $username): bool
+    {
+        return $this->available('username', $username);
+    }
+
+    /**
+     * Vérifie si un email est disponible
+     */
+    public function isEmailAvailable(string $email): bool
+    {
+        return $this->available('email', $email);
     }
 }

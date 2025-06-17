@@ -1,0 +1,94 @@
+@use 'sass:color';
+@use '../theme';
+
+// Variables spécifiques à la searchbar
+$search-box-min-width: 300px;
+$search-icon-size: 16px;
+
+// Section filtres et recherche
+.filters-section {
+  background: theme.$color-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid theme.$color-border;
+  padding: 24px;
+  margin-bottom: 24px;
+
+  .filters-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: $search-box-min-width;
+      position: relative;
+
+      @media (max-width: 768px) {
+        min-width: auto;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 40px 12px 16px;
+        border: 1px solid theme.$color-border;
+        border-radius: 8px;
+        font-size: theme.$font-size-base;
+        font-family: theme.$font-family-base;
+        transition: border-color theme.$transition-speed ease;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: theme.$color-primary;
+          box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+
+        &::placeholder {
+          color: theme.$color-muted;
+        }
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: theme.$color-muted;
+        width: $search-icon-size;
+        height: $search-icon-size;
+      }
+    }
+
+    .filter-select {
+      select {
+        padding: 12px 16px;
+        border: 1px solid theme.$color-border;
+        border-radius: 8px;
+        background-color: theme.$color-background;
+        font-size: theme.$font-size-base;
+        font-family: theme.$font-family-base;
+        cursor: pointer;
+        min-width: 150px;
+
+        &:focus {
+          outline: none;
+          border-color: theme.$color-primary;
+          box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+      }
+    }
+
+    .results-count {
+      color: theme.$color-muted;
+      font-size: theme.$font-size-small;
+      white-space: nowrap;
+    }
+  }
+}

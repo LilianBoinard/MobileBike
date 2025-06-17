@@ -1,0 +1,241 @@
+@use 'sass:color';
+@use '../theme';
+
+// Variables spécifiques aux tables
+$image-size: 60px;
+$stock-badge-radius: 20px;
+$action-button-padding: 6px 12px;
+
+// Mixins pour les boutons d'action
+@mixin action-button($bg-color) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $action-button-padding;
+  border: none;
+  border-radius: 8px;
+  font-size: theme.$font-size-small;
+  font-weight: theme.$font-weight-bold;
+  font-family: theme.$font-family-base;
+  cursor: pointer;
+  transition: all theme.$transition-speed ease;
+  text-decoration: none;
+  gap: 8px;
+  white-space: nowrap;
+  background-color: $bg-color;
+  color: theme.$color-text-light;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: color.adjust($bg-color, $lightness: -10%);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Table des produits
+.products-table {
+  background: theme.$color-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid theme.$color-border;
+  overflow: hidden;
+
+  .table-header {
+    background-color: theme.$color-surface;
+    padding: 16px 24px;
+    border-bottom: 1px solid theme.$color-border;
+
+    h3 {
+      margin: 0;
+      color: theme.$color-text;
+      font-size: theme.$font-size-large;
+      font-weight: theme.$font-weight-bold;
+    }
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: theme.$font-size-base;
+
+      thead {
+        background-color: color.adjust(theme.$color-surface, $lightness: 2%);
+
+        th {
+          padding: 16px 24px;
+          text-align: left;
+          font-weight: theme.$font-weight-bold;
+          color: theme.$color-text;
+          border-bottom: 2px solid theme.$color-border;
+          white-space: nowrap;
+
+          &.sortable {
+            cursor: pointer;
+            position: relative;
+
+            &:hover {
+              background-color: color.adjust(theme.$color-surface, $lightness: -5%);
+            }
+
+            .sort-icon {
+              margin-left: 8px;
+              opacity: 0.5;
+              transition: opacity theme.$transition-speed ease;
+            }
+
+            &.active .sort-icon {
+              opacity: 1;
+            }
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          transition: background-color theme.$transition-speed ease;
+
+          &:hover {
+            background-color: color.adjust(theme.$color-surface, $lightness: 5%);
+          }
+
+          &:not(:last-child) {
+            border-bottom: 1px solid theme.$color-border;
+          }
+
+          td {
+            padding: 16px 24px;
+            vertical-align: middle;
+
+            &.product-image {
+              width: 80px;
+
+              img {
+                width: $image-size;
+                height: $image-size;
+                object-fit: cover;
+                border-radius: 8px;
+                border: 1px solid theme.$color-border;
+              }
+            }
+
+            &.product-name {
+              font-weight: theme.$font-weight-bold;
+              color: theme.$color-text;
+              min-width: 200px;
+            }
+
+            &.product-price {
+              font-weight: theme.$font-weight-bold;
+              color: theme.$color-secondary;
+              white-space: nowrap;
+            }
+
+            &.product-stock {
+              .stock-badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: $stock-badge-radius;
+                font-size: theme.$font-size-small;
+                font-weight: theme.$font-weight-bold;
+
+                &.in-stock {
+                  background-color: color.adjust(theme.$color-accent, $lightness: 40%);
+                  color: color.adjust(theme.$color-accent, $lightness: -20%);
+                }
+
+                &.low-stock {
+                  background-color: color.adjust(theme.$color-primary, $lightness: 40%);
+                  color: color.adjust(theme.$color-primary, $lightness: -20%);
+                }
+
+                &.out-stock {
+                  background-color: color.adjust(theme.$color-muted, $lightness: 30%);
+                  color: color.adjust(theme.$color-muted, $lightness: -20%);
+                }
+              }
+            }
+
+            &.product-actions {
+              white-space: nowrap;
+
+              .actions-group {
+                display: flex;
+                gap: 8px;
+
+                .btn-edit {
+                  @include action-button(theme.$color-secondary);
+                }
+
+                .btn-delete {
+                  @include action-button(theme.$color-primary);
+                }
+
+                .btn-view {
+                  @include action-button(theme.$color-accent);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive pour les tables
+  @media (max-width: 768px) {
+    .table-wrapper {
+      table {
+        font-size: theme.$font-size-small;
+
+        thead th,
+        tbody td {
+          padding: 12px;
+        }
+
+        .product-actions {
+          .actions-group {
+            flex-direction: column;
+            gap: 4px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// États vides
+.empty-state {
+  text-align: center;
+  padding: 64px;
+  color: theme.$color-muted;
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 24px;
+    opacity: 0.5;
+  }
+
+  h3 {
+    margin: 0 0 12px;
+    color: theme.$color-text;
+  }
+
+  p {
+    margin: 0 0 24px;
+    font-size: theme.$font-size-base;
+  }
+}

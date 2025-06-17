@@ -18,6 +18,7 @@ use MobileBike\Core\Exception\Exceptions\NotFoundException;
 use MobileBike\Core\Middleware\MiddlewareHandler;
 use MobileBike\Core\Routing\RouteLoader;
 use MobileBike\Core\Routing\Router;
+use MobileBike\Core\Service\ImageUploadService;
 use MobileBike\Core\Session\NativeSession;
 use MobileBike\Core\View\View;
 use PDO;
@@ -51,6 +52,7 @@ class Bootstrap
         self::registerCoreServices($container);
         self::registerDatabaseServices($container);
         self::registerExceptionServices($container);
+        self::registerUtilsServices($container);
 
         // Récupération des services
         $app->router = $container->get(Router::class);
@@ -193,6 +195,13 @@ class Bootstrap
 
         $container->singleton(UserRepositoryInterface::class, function ($container) {
             return new UserRepository($container->get(Database::class));
+        });
+    }
+
+    private static function registerUtilsServices(Container $container): void
+    {
+        $container->singleton(ImageUploadService::class, function () {
+            return new ImageUploadService();
         });
     }
 

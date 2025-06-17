@@ -22,6 +22,7 @@ $router->get('/admin/users', 'Admin\UserController@index')->name('admin.users');
 **/
 
 $router->get('/', 'HomeController@index')->name('home');
+
 $router->get('/about', 'AboutController@index')->name('about');
 $router->get('/services', 'ServicesController@index')->name('services');
 $router->get('/products', 'ProductsController@index')->name('products');
@@ -29,7 +30,16 @@ $router->get('/contact', 'ContactController@index')->name('contact');
 $router->get('/login', 'LoginController@index')->name('login');
 $router->post('/login', 'UserController@attemptLogin')->name('login');
 $router->get('/logout', 'UserController@attemptLogout')->name('logout');
+
 $router->get('/dashboard', 'DashboardController@index')->name('dashboard');
-$router->get('/test/{id}', 'TestController@index')
+
+$router->get('/dashboard/products', 'DashboardProductsController@index')->name('dashboard-products');
+$router->get('/dashboard/product/edit/{id}', 'DashboardProductsController@displayEditProductPage')
     ->where(['id' => '\d+'])
-    ->name('test');
+    ->name('dashboard-product-edit');
+$router->get('/dashboard/products/mobilebike/add', 'DashboardProductsController@displayAddMobileBikePage')->name('dashboard-product-mobilebike-add');
+$router->post('/dashboard/products/mobilebike/add', 'DashboardProductsController@saveMobileBike')->name('dashboard-product-mobilebike-add');
+$router->get('/dashboard/products/sparepart/add', 'DashboardProductsController@displayAddSparePartPage')->name('dashboard-product-sparepart-add');
+$router->post('/dashboard/products/delete/{id}', 'DashboardProductsController@deleteProduct')
+    ->where(['id' => '\d+'])
+    ->name('dashboard-product-delete');

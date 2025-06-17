@@ -1,0 +1,81 @@
+@use 'sass:color';
+@use '../theme';
+
+// Variables spécifiques à la pagination
+$page-btn-min-width: 40px;
+
+// Mixin pour les boutons de pagination
+@mixin page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 1px solid theme.$color-border;
+  border-radius: 8px;
+  font-size: theme.$font-size-small;
+  font-weight: theme.$font-weight-bold;
+  font-family: theme.$font-family-base;
+  cursor: pointer;
+  transition: all theme.$transition-speed ease;
+  text-decoration: none;
+  gap: 8px;
+  white-space: nowrap;
+  min-width: $page-btn-min-width;
+  background-color: theme.$color-background;
+  color: theme.$color-text;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: theme.$color-surface;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.active {
+    background-color: theme.$color-primary;
+    color: theme.$color-text-light;
+    border-color: theme.$color-primary;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    background-color: theme.$color-surface;
+    color: theme.$color-muted;
+    border-color: theme.$color-border;
+  }
+}
+
+// Pagination
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+
+  .page-btn {
+    @include page-button;
+  }
+
+  .page-info {
+    color: theme.$color-muted;
+    font-size: theme.$font-size-small;
+    margin: 0 16px;
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    gap: 8px;
+    padding: 16px;
+
+    .page-info {
+      margin: 0 8px;
+      font-size: theme.$font-size-extra-small;
+    }
+  }
+}

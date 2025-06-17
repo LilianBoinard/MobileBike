@@ -1,0 +1,84 @@
+@use 'sass:color';
+@use '../theme';
+
+// Mixin pour les boutons d'action en lot
+@mixin bulk-button($bg-color) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: theme.$font-size-small;
+  font-weight: theme.$font-weight-bold;
+  font-family: theme.$font-family-base;
+  cursor: pointer;
+  transition: all theme.$transition-speed ease;
+  text-decoration: none;
+  gap: 8px;
+  white-space: nowrap;
+  background-color: $bg-color;
+  color: theme.$color-text-light;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: color.adjust($bg-color, $lightness: -10%);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Actions en lot
+.bulk-actions {
+  background: theme.$color-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid theme.$color-border;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  display: none;
+
+  &.active {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .selected-count {
+    color: theme.$color-text;
+    font-weight: theme.$font-weight-bold;
+  }
+
+  .bulk-buttons {
+    display: flex;
+    gap: 12px;
+
+    .btn-bulk-delete {
+      @include bulk-button(theme.$color-primary);
+    }
+
+    .btn-bulk-export {
+      @include bulk-button(theme.$color-accent);
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+
+    .bulk-buttons {
+      justify-content: center;
+    }
+  }
+}

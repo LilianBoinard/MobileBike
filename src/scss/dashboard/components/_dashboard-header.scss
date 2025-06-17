@@ -1,0 +1,72 @@
+@use 'sass:color';
+@use '../../theme';
+
+// Variables spécifiques au header
+$icon-size: 20px;
+
+// Mixin pour le bouton d'ajout
+@mixin add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: theme.$font-size-base;
+  font-weight: theme.$font-weight-bold;
+  font-family: theme.$font-family-base;
+  cursor: pointer;
+  transition: all theme.$transition-speed ease;
+  text-decoration: none;
+  gap: 8px;
+  white-space: nowrap;
+  background-color: theme.$color-primary;
+  color: theme.$color-text-light;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: color.adjust(theme.$color-primary, $lightness: -10%);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// En-tête du dashboard
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  h1 {
+    color: theme.$color-text;
+    font-size: theme.$font-size-extra-large;
+    font-weight: theme.$font-weight-bold;
+    margin: 0;
+  }
+
+  .add-product-btn {
+    @include add-button;
+
+    .icon {
+      width: $icon-size;
+      height: $icon-size;
+      fill: currentColor;
+    }
+  }
+}

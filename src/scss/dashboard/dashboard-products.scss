@@ -1,0 +1,47 @@
+@use 'sass:color';
+
+// Import du thème
+@use '../theme';
+
+// Import des composants
+@use 'components/dashboard-header';
+@use '../components/searchbar';
+@use '../components/table';
+@use '../components/pagination';
+@use '../components/bulk-actions';
+@use '../animations';
+
+// Variables globales spécifiques au dashboard
+$dashboard-padding-lg: 24px;
+$dashboard-padding-md: 16px;
+
+// Container principal
+.products-dashboard {
+  padding: $dashboard-padding-lg;
+  background-color: theme.$color-background;
+  min-height: 100vh;
+  font-family: theme.$font-family-base;
+
+  // Responsive
+  @media (max-width: 768px) {
+    padding: $dashboard-padding-md;
+  }
+
+  .stock-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .stock-badge.in-stock {
+    background-color: #e6f7e6;
+    color: #2e7d32;
+  }
+
+  .stock-badge.out-stock {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+}
