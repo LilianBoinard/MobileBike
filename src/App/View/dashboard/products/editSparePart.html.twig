@@ -4,18 +4,18 @@
 
 {% block content %}
 
-    <h1>Ajouter un Produit</h1>
+    <h1>Modifier une Pièce Détaché</h1>
 
-    <form class="form" action="/dashboard/products/mobilebike/add" method="POST" enctype="multipart/form-data">
+    <form class="form" action="/dashboard/products/edit/{{ product.id_product }}" method="POST" enctype="multipart/form-data">
 
         <div class="form-group">
             <label for="name" class="form-label">Modèle</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="ALPHA-9" required>
+            <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}" required>
         </div>
 
         <div class="form-group">
             <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" name="description" class="form-control" placeholder="Une super vitesse..." required>
+            <input type="text" id="description" name="description" class="form-control" value="{{ product.description }}" placeholder="Assioma PRO MX est la pédale de puissance ultime">
         </div>
 
         <div class="form-group">
@@ -35,39 +35,31 @@
                     </div>
                     <span>Glissez-déposez votre image ici ou cliquez pour sélectionner</span>
                     <span class="form-file-button">Choisir un fichier</span>
-                    <span class="form-file-filename" id="file-name">Aucun fichier sélectionné</span>
-                    <img src="" alt="Aperçu de l'image" class="form-file-preview" id="image-preview">
+                    <span class="form-file-filename has-file" id="file-name">{{ product.image }}</span>
+                    <img src="/assets/uploads/products/{{ product.image }}" alt="Aperçu de l'image" class="form-file-preview has-image" id="image-preview">
                 </label>
             </div>
         </div>
 
         <div class="form-group">
             <label for="price" class="form-label">Prix</label>
-            <input type="number" id="price" name="price" class="form-control" placeholder="6000" step="0.01" required>
+            <input type="number" name="price" id="price" class="form-control" value="{{ product.price }}" placeholder="756,29" required>
         </div>
 
         <div class="form-group">
             <label for="brand" class="form-label">Marque</label>
-            <input type="text" id="brand" name="brand" class="form-control" placeholder="Cattrike" required>
-        </div>
-
-        <div class="form-group">
-            <label for="type" class="form-label">Type</label>
-            <select id="type" name="type" class="form-control form-select">
-            {% for type in mobileBikeTypes %}
-                <option value="{{ type }}">{{ type|title }}</option>
-            {% endfor %}
-            </select>
+            <input type="text" id="brand" name="brand" class="form-control" value="{{ product.brand }}"  placeholder="Assioma" required>
         </div>
 
         <div class="form-check-group">
             <label class="form-check">
                 <span class="form-check-label">En stock ?</span>
-                <input type="checkbox" id="stock" name="stock" class="form-check-input" value="1" checked>
+                <input type="checkbox" name="stock" id="stock" class="form-check-input" {{ product.stock ? 'checked' : '' }}>
+
             </label>
         </div>
 
-        <button type="submit" class="form-submit">Ajouter</button>
+        <button type="submit" class="form-submit">Modifier</button>
     </form>
     <script type="text/javascript" src="/assets/js/imageUpload.js"></script>
 {% endblock %}

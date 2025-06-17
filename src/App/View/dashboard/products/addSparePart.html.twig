@@ -6,31 +6,60 @@
 
     <h1>Ajouter une Pièce Détaché</h1>
 
-    <form class="form">
+    <form class="form" action="/dashboard/products/sparepart/add" method="POST" enctype="multipart/form-data">
 
         <div class="form-group">
             <label for="name" class="form-label">Modèle</label>
-            <input type="text" id="name" class="form-control" placeholder="Assioma PRO MX-2" required>
+            <input type="text" id="name" name="name" class="form-control" placeholder="PRO MX-2" required>
         </div>
 
         <div class="form-group">
             <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" class="form-control" placeholder="Assioma PRO MX est la pédale de puissance ultime">
+            <input type="text" id="description" name="description" class="form-control" placeholder="Assioma PRO MX est la pédale de puissance ultime">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Image</label>
+            <div class="form-file-wrapper">
+                <input type="file" id="image-upload" name="image" class="form-file-input" accept="image/*">
+                <label for="image-upload" class="form-file-label">
+                    <div class="form-file-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+                            <line x1="16" y1="5" x2="22" y2="5"></line>
+                            <line x1="19" y1="2" x2="19" y2="8"></line>
+                            <circle cx="9" cy="9" r="2"></circle>
+                            <path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                        </svg>
+                    </div>
+                    <span>Glissez-déposez votre image ici ou cliquez pour sélectionner</span>
+                    <span class="form-file-button">Choisir un fichier</span>
+                    <span class="form-file-filename" id="file-name">Aucun fichier sélectionné</span>
+                    <img src="" alt="Aperçu de l'image" class="form-file-preview" id="image-preview">
+                </label>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="price" class="form-label">Prix</label>
-            <input type="number" id="price" class="form-control" placeholder="756,29">
+            <input type="number" name="price" id="price" class="form-control" placeholder="756,29">
+        </div>
+
+        <div class="form-group">
+            <label for="brand" class="form-label">Marque</label>
+            <input type="text" id="brand" name="brand" class="form-control"  placeholder="Assioma" required>
         </div>
 
         <div class="form-check-group">
             <label class="form-check">
                 <span class="form-check-label">En stock ?</span>
-                <input type="checkbox" id="stock" class="form-check-input" checked>
+                <input type="checkbox" name="stock" id="stock" class="form-check-input" checked>
 
             </label>
         </div>
 
         <button type="submit" class="form-submit">Ajouter</button>
     </form>
+    <script type="text/javascript" src="/assets/js/imageUpload.js"></script>
 {% endblock %}

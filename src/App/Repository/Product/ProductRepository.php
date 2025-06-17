@@ -3,6 +3,11 @@
 namespace MobileBike\App\Repository\Product;
 
 use MobileBike\App\Model\Product\MobileBike\MobileBike;
+use MobileBike\App\Model\Product\MobileBike\Type\Fairing;
+use MobileBike\App\Model\Product\MobileBike\Type\Recumbent;
+use MobileBike\App\Model\Product\MobileBike\Type\Special;
+use MobileBike\App\Model\Product\MobileBike\Type\Trikes;
+use MobileBike\App\Model\Product\MobileBike\Type\Used;
 use MobileBike\App\Model\Product\Product;
 use MobileBike\App\Model\Product\SparePart\SparePart;
 use MobileBike\App\Repository\AbstractRepository;
@@ -11,10 +16,19 @@ use PDO;
 
 class ProductRepository extends AbstractRepository
 {
-    protected string $table = 'product';
+    protected string $table = 'Product';
     protected string $entityClass = Product::class;
     protected string $primaryKey = 'id_product';
-    protected bool $hasPolymorphicRelations = true; // Indique que ce repository gère des relations polymorphes
+    protected bool $hasPolymorphicRelations = true;
+
+    // Mapping des types de MobileBike
+    private const MOBILE_BIKE_TYPES = [
+        'used' => Used::class,
+        'trikes' => Trikes::class,
+        'recumbent' => Recumbent::class,
+        'fairing' => Fairing::class,
+        'special' => Special::class,
+    ];
 
     public function __construct(Database $database)
     {
@@ -49,14 +63,18 @@ class ProductRepository extends AbstractRepository
         }
 
         return $this->executeInTransaction(function () use ($entity) {
-            // Supprimer d'abord des tables spécialisées (contraintes FK)
+            // Supprimer des tables les plus spécialisées vers les plus générales
+            if ($this->isMobileBikeSubType($entity)) {
+                $this->deleteMobileBikeSubType($entity);
+            }
+
             if ($entity instanceof MobileBike) {
                 $this->deleteMobileBike($entity->id_product);
             } elseif ($entity instanceof SparePart) {
                 $this->deleteSparePart($entity->id_product);
             }
 
-            // Puis supprimer de la table Product
+            // Supprimer de la table Product
             $stmt = $this->database->prepare("DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id");
             return $stmt->execute(['id' => $entity->id_product]);
         });
@@ -69,9 +87,10 @@ class ProductRepository extends AbstractRepository
     {
         $products = [];
 
-        // Récupérer les MobileBikes
-        $mobileBikes = $this->findAllMobileBikes();
-        $products = array_merge($products, $mobileBikes);
+        // Récupérer tous les sous-types de MobileBike
+        foreach (self::MOBILE_BIKE_TYPES as $type => $class) {
+            $products = array_merge($products, $this->findAllByMobileBikeType($type));
+        }
 
         // Récupérer les SpareParts
         $spareParts = $this->findAllSpareParts();
@@ -85,20 +104,12 @@ class ProductRepository extends AbstractRepository
      */
     protected function findByIdWithType(int $id): ?object
     {
-        // D'abord vérifier si c'est un MobileBike
-        $sql = "
-            SELECT p.*, mb.*
-            FROM Product p
-            INNER JOIN MobileBike mb ON p.id_product = mb.id_product
-            WHERE p.id_product = :id
-        ";
-
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            return new MobileBike($row);
+        // Vérifier chaque sous-type de MobileBike
+        foreach (self::MOBILE_BIKE_TYPES as $type => $class) {
+            $product = $this->findMobileBikeByTypeAndId($type, $id);
+            if ($product) {
+                return $product;
+            }
         }
 
         // Vérifier si c'est un SparePart
@@ -130,6 +141,8 @@ class ProductRepository extends AbstractRepository
             'description' => $entity->description,
             'price' => $entity->price,
             'stock' => $entity->stock,
+            'brand' => $entity->brand,
+            'image' => $entity->image,
         ];
 
         $sql = $this->buildInsertQuery($fields);
@@ -142,9 +155,13 @@ class ProductRepository extends AbstractRepository
 
         $entity->id_product = (int) $this->database->lastInsertId();
 
-        // 2. Insérer dans la table spécialisée selon le type
+        // 2. Insérer dans les tables spécialisées selon le type
         if ($entity instanceof MobileBike) {
-            return $this->createMobileBike($entity);
+            $result = $this->createMobileBike($entity);
+            if ($result && $this->isMobileBikeSubType($entity)) {
+                return $this->createMobileBikeSubType($entity);
+            }
+            return $result;
         } elseif ($entity instanceof SparePart) {
             return $this->createSparePart($entity);
         }
@@ -160,6 +177,8 @@ class ProductRepository extends AbstractRepository
             'description' => $entity->description,
             'price' => $entity->price,
             'stock' => $entity->stock,
+            'brand' => $entity->brand,
+            'image' => $entity->image,
         ];
 
         $sql = $this->buildUpdateQuery($fields);
@@ -172,9 +191,13 @@ class ProductRepository extends AbstractRepository
             return false;
         }
 
-        // 2. Mettre à jour la table spécialisée selon le type
+        // 2. Mettre à jour les tables spécialisées selon le type
         if ($entity instanceof MobileBike) {
-            return $this->updateMobileBike($entity);
+            $result = $this->updateMobileBike($entity);
+            if ($result && $this->isMobileBikeSubType($entity)) {
+                return $this->updateMobileBikeSubType($entity);
+            }
+            return $result;
         } elseif ($entity instanceof SparePart) {
             return $this->updateSparePart($entity);
         }
@@ -185,16 +208,14 @@ class ProductRepository extends AbstractRepository
     private function createMobileBike(MobileBike $mobileBike): bool
     {
         $sql = "
-            INSERT INTO MobileBike (id_product, image, color, material, brand)
-            VALUES (:id_product, :image, :color, :material, :brand)
+            INSERT INTO MobileBike (id_product, color, material)
+            VALUES (:id_product, :color, :material)
         ";
         $stmt = $this->database->prepare($sql);
         return $stmt->execute([
             'id_product' => $mobileBike->id_product,
-            'image' => $mobileBike->image,
             'color' => $mobileBike->color,
             'material' => $mobileBike->material,
-            'brand' => $mobileBike->brand
         ]);
     }
 
@@ -202,32 +223,41 @@ class ProductRepository extends AbstractRepository
     {
         $sql = "
             UPDATE MobileBike 
-            SET image = :image, 
-                color = :color, 
-                material = :material, 
-                brand = :brand
+            SET color = :color, 
+                material = :material
             WHERE id_product = :id_product
         ";
         $stmt = $this->database->prepare($sql);
         return $stmt->execute([
             'id_product' => $mobileBike->id_product,
-            'image' => $mobileBike->image,
             'color' => $mobileBike->color,
             'material' => $mobileBike->material,
-            'brand' => $mobileBike->brand
         ]);
+    }
+
+    private function createMobileBikeSubType(MobileBike $mobileBike): bool
+    {
+        $tableName = $this->getMobileBikeSubTypeTable($mobileBike);
+        if (!$tableName) {
+            return false;
+        }
+
+        $sql = "INSERT INTO {$tableName} (id_product) VALUES (:id_product)";
+        $stmt = $this->database->prepare($sql);
+        return $stmt->execute(['id_product' => $mobileBike->id_product]);
+    }
+
+    private function updateMobileBikeSubType(MobileBike $mobileBike): bool
+    {
+        // Pour l'instant, les sous-types n'ont pas de champs spécifiques à mettre à jour
+        return true;
     }
 
     private function createSparePart(SparePart $sparePart): bool
     {
-        $sql = "
-            INSERT INTO Spare_Part (id_product)
-            VALUES (:id_product)
-        ";
+        $sql = "INSERT INTO Spare_Part (id_product) VALUES (:id_product)";
         $stmt = $this->database->prepare($sql);
-        return $stmt->execute([
-            'id_product' => $sparePart->id_product
-        ]);
+        return $stmt->execute(['id_product' => $sparePart->id_product]);
     }
 
     private function updateSparePart(SparePart $sparePart): bool
@@ -243,6 +273,18 @@ class ProductRepository extends AbstractRepository
         return $stmt->execute(['id_product' => $id]);
     }
 
+    private function deleteMobileBikeSubType(MobileBike $mobileBike): bool
+    {
+        $tableName = $this->getMobileBikeSubTypeTable($mobileBike);
+        if (!$tableName) {
+            return false;
+        }
+
+        $sql = "DELETE FROM {$tableName} WHERE id_product = :id_product";
+        $stmt = $this->database->prepare($sql);
+        return $stmt->execute(['id_product' => $mobileBike->id_product]);
+    }
+
     private function deleteSparePart(int $id): bool
     {
         $sql = "DELETE FROM Spare_Part WHERE id_product = :id_product";
@@ -250,26 +292,27 @@ class ProductRepository extends AbstractRepository
         return $stmt->execute(['id_product' => $id]);
     }
 
-    // === MÉTHODES SPÉCIALISÉES PUBLIQUES ===
-
-    public function findAllMobileBikes(): array
+    private function isMobileBikeSubType(object $entity): bool
     {
-        $sql = "
-            SELECT p.*, mb.*
-            FROM Product p
-            INNER JOIN MobileBike mb ON p.id_product = mb.id_product
-        ";
-
-        $stmt = $this->database->query($sql);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $mobileBikes = [];
-        foreach ($results as $row) {
-            $mobileBikes[] = new MobileBike($row);
+        foreach (self::MOBILE_BIKE_TYPES as $class) {
+            if ($entity instanceof $class) {
+                return true;
+            }
         }
-
-        return $mobileBikes;
+        return false;
     }
+
+    private function getMobileBikeSubTypeTable(MobileBike $mobileBike): ?string
+    {
+        foreach (self::MOBILE_BIKE_TYPES as $type => $class) {
+            if (get_class($mobileBike) === $class) {
+                return ucfirst($type); // Utilise Used, Trikes, etc.
+            }
+        }
+        return null;
+    }
+
+    // === MÉTHODES SPÉCIALISÉES PUBLIQUES ===
 
     public function findAllSpareParts(): array
     {
@@ -290,14 +333,91 @@ class ProductRepository extends AbstractRepository
         return $spareParts;
     }
 
-    public function getProductType(int $id): ?string
+    public function findAllMobileBikes(): array
     {
-        // Vérifier MobileBike
-        $sql = "SELECT COUNT(*) FROM MobileBike WHERE id_product = :id";
+        $sql = "
+            SELECT p.*
+            FROM Product p
+            INNER JOIN Mobilebike mb ON p.id_product = mb.id_product
+        ";
+
+        $stmt = $this->database->query($sql);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $mobileBikes = [];
+        foreach ($results as $row) {
+            $mobileBikes[] = new MobileBike($row);
+        }
+
+        return $mobileBikes;
+    }
+
+    public function findAllByMobileBikeType(string $type): array
+    {
+        if (!isset(self::MOBILE_BIKE_TYPES[$type])) {
+            throw new \InvalidArgumentException("Type de MobileBike inconnu: {$type}");
+        }
+
+        $tableName = ucfirst($type);
+        $className = self::MOBILE_BIKE_TYPES[$type];
+
+        $sql = "
+            SELECT p.*, mb.*
+            FROM Product p
+            INNER JOIN MobileBike mb ON p.id_product = mb.id_product
+            INNER JOIN {$tableName} t ON mb.id_product = t.id_product
+        ";
+
+        $stmt = $this->database->query($sql);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $products = [];
+        foreach ($results as $row) {
+            $products[] = new $className($row);
+        }
+
+        return $products;
+    }
+
+    public function findMobileBikeByTypeAndId(string $type, int $id): ?object
+    {
+        if (!isset(self::MOBILE_BIKE_TYPES[$type])) {
+            return null;
+        }
+
+        $tableName = ucfirst($type);
+        $className = self::MOBILE_BIKE_TYPES[$type];
+
+        $sql = "
+            SELECT p.*, mb.*
+            FROM Product p
+            INNER JOIN MobileBike mb ON p.id_product = mb.id_product
+            INNER JOIN {$tableName} t ON mb.id_product = t.id_product
+            WHERE p.id_product = :id
+        ";
+
         $stmt = $this->database->prepare($sql);
         $stmt->execute(['id' => $id]);
-        if ($stmt->fetchColumn() > 0) {
-            return 'mobile_bike';
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new $className($row);
+        }
+
+        return null;
+    }
+
+    public function getProductType(int $id): ?string
+    {
+        // Vérifier chaque sous-type de MobileBike
+        foreach (self::MOBILE_BIKE_TYPES as $type => $class) {
+            $tableName = ucfirst($type);
+            $sql = "SELECT COUNT(*) FROM {$tableName} WHERE id_product = :id";
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute(['id' => $id]);
+            if ($stmt->fetchColumn() > 0) {
+                return $type;
+            }
         }
 
         // Vérifier SparePart
@@ -316,24 +436,25 @@ class ProductRepository extends AbstractRepository
         return $this->findBy(['stock' => true]);
     }
 
-    public function findMobileBikesByBrand(string $brand): array
+    public function findByBrand(string $brand): array
     {
-        $sql = "
-            SELECT p.*, mb.*
-            FROM Product p
-            INNER JOIN MobileBike mb ON p.id_product = mb.id_product
-            WHERE mb.brand = :brand
-        ";
-
+        $sql = "SELECT * FROM Product WHERE brand = :brand";
         $stmt = $this->database->prepare($sql);
         $stmt->execute(['brand' => $brand]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $mobileBikes = [];
+        $products = [];
         foreach ($results as $row) {
-            $mobileBikes[] = new MobileBike($row);
+            // Déterminer le type et créer l'instance appropriée
+            $type = $this->getProductType($row['id_product']);
+            if ($type && $type !== 'spare_part') {
+                $className = self::MOBILE_BIKE_TYPES[$type];
+                $products[] = new $className($row);
+            } elseif ($type === 'spare_part') {
+                $products[] = new SparePart($row);
+            }
         }
 
-        return $mobileBikes;
+        return $products;
     }
 }

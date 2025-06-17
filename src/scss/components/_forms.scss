@@ -50,7 +50,7 @@
     background-size: 1rem;
   }
 
-  // Styles améliorés pour checkboxes et radios
+  // Styles checkboxes et radios
   &-check {
     display: flex;
     align-items: center;
@@ -138,7 +138,7 @@
 
     &-preview {
       margin-top: 1rem;
-      max-width: 100%;
+      max-width: 10rem;
       height: auto;
       border-radius: 4px;
       display: none;

@@ -6,5 +6,8 @@ use MobileBike\App\Model\Product\MobileBike\MobileBike;
 
 class Special extends MobileBike
 {
-
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+    }
 }

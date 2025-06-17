@@ -40,6 +40,13 @@ $router->get('/dashboard/product/edit/{id}', 'DashboardProductsController@displa
 $router->get('/dashboard/products/mobilebike/add', 'DashboardProductsController@displayAddMobileBikePage')->name('dashboard-product-mobilebike-add');
 $router->post('/dashboard/products/mobilebike/add', 'DashboardProductsController@saveMobileBike')->name('dashboard-product-mobilebike-add');
 $router->get('/dashboard/products/sparepart/add', 'DashboardProductsController@displayAddSparePartPage')->name('dashboard-product-sparepart-add');
+$router->post('/dashboard/products/sparepart/add', 'DashboardProductsController@saveSparePart')->name('dashboard-product-sparepart-add');
 $router->post('/dashboard/products/delete/{id}', 'DashboardProductsController@deleteProduct')
     ->where(['id' => '\d+'])
     ->name('dashboard-product-delete');
+$router->get('/dashboard/products/edit/{id}', 'DashboardProductsController@displayEditProductPage')
+    ->where(['id' => '\d+'])
+    ->name('dashboard-product-edit');
+$router->post('/dashboard/products/edit/{id}', 'DashboardProductsController@editProduct')
+    ->where(['id' => '\d+'])
+    ->name('dashboard-product-edit');

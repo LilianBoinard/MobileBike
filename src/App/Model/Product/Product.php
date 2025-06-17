@@ -9,6 +9,8 @@ class Product
     public string $description;
     public float $price;
     public bool $stock;
+    public string $brand;
+    public string $image;
 
     public function __construct(array $data = [])
     {
@@ -17,6 +19,8 @@ class Product
         $this->description = trim($data['description'] ?? '');
         $this->price = max(0, round($data['price'] ?? 0, 2));
         $this->stock = (bool)($data['stock'] ?? false);
+        $this->brand = $data['brand'] ?? '';
+        $this->image = $data['image'] ?? '';
     }
 
 }

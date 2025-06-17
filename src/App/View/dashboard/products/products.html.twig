@@ -73,11 +73,11 @@
                     {% for product in products %}
                         <tr>
                             <td class="product-image">
-                                <img src="{{ product.image ? '/uploads/products/' ~ product.image : '/assets/images/default-bike.jpg' }}" alt="{{ product.name }}">
+                                <img src="{{ product.image ? '/assets/uploads/products/' ~ product.image : '/assets/images/default-bike.jpg' }}" alt="{{ product.name }}">
                             </td>
                             <td class="product-name">{{ product.name }}</td>
                             <td>{{ product.brand }}</td>
-                            <td class="product-price">{{ product.price }}</td>
+                            <td class="product-price">{{ product.price }} €</td>
                             <td>
                                     <span class="stock-badge {{ product.stock ? 'in-stock' : 'out-stock' }}">
                                         {{ product.stock ? 'En stock' : 'Rupture' }}
@@ -85,10 +85,10 @@
                             </td>
                             <td class="product-actions">
                                 <div class="actions-group">
-                                    <a href="/dashboard/products/mobilebike/view/{{ product.id_product }}" class="btn-view">
+                                    <a href="../products/mobilebike/{{ product.id_product }}" class="btn-view">
                                         <i class="fa-solid fa-eye" data-feather="eye" aria-label="voir"></i>
                                     </a>
-                                    <a href="/dashboard/products/mobilebike/edit/{{ product.id_product }}" class="btn-edit">
+                                    <a href="/dashboard/products/edit/{{ product.id_product }}" class="btn-edit">
                                         <i class="fa-solid fa-pencil" data-feather="edit" aria-label="modifier"></i>
                                     </a>
                                     <form action="/dashboard/products/delete/{{ product.id_product }}" method="POST" class="delete-form">

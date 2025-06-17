@@ -8,7 +8,7 @@ class ImageUploadService
     private array $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     private int $maxFileSize = 5 * 1024 * 1024; // 5MB
 
-    public function __construct(string $uploadDir = '/public/uploads/')
+    public function __construct(string $uploadDir = '/public/assets/uploads/')
     {
         $this->setUploadDir($uploadDir);
     }
