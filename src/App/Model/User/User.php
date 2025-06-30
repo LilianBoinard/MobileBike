@@ -2,70 +2,35 @@
 
 namespace MobileBike\App\Model\User;
 
+use DateTime;
+
 class User
 {
-    public ?int $id_user = null;
-    public string $username = '';
-    public string $password = '';
-    public string $email = '';
-    public string $created = '';
-    public string $profileImage = '';
+    public ?int $id;
+    public string $username;
+    public string $password;
+    public string $email;
+    public ?DateTime $created;
+    public ?string $profile_image;
 
-    /**
-     * Constructeur qui accepte un tableau de données (pour hydrateEntity)
-     * ou aucun paramètre (pour PDO::FETCH_CLASS)
-     */
     public function __construct(array $data = [])
     {
-        if (!empty($data)) {
-            $this->hydrate($data);
-        }
-    }
-
-    /**
-     * Hydrate l'objet avec un tableau de données
-     */
-    private function hydrate(array $data): void
-    {
-        $this->id_user = isset($data['id_user']) ? (int)$data['id_user'] : null;
-        $this->username = $data['username'] ?? '';
+        $this->id = isset($data['id']) ? (int)$data['id'] : null;
+        $this->username = trim($data['username'] ?? '');
         $this->password = $data['password'] ?? '';
-        $this->email = $data['email'] ?? '';
-        $this->created = $data['created'] ?? '';
-        $this->profileImage = $data['profile_image'] ?? '';
-    }
+        $this->email = trim($data['email'] ?? '');
 
-    /**
-     * Magic setter pour gérer les noms de colonnes de la DB
-     */
-    public function __set($name, $value)
-    {
-        switch ($name) {
-            case 'profile_image':
-                $this->profileImage = $value;
-                break;
-            case 'id_user':
-                $this->id_user = $value ? (int)$value : null;
-                break;
-            default:
-                if (property_exists($this, $name)) {
-                    $this->$name = $value;
-                }
-                break;
+        // Gestion de la date created
+        $this->created = null;
+        if (isset($data['created'])) {
+            if ($data['created'] instanceof DateTime) {
+                $this->created = $data['created'];
+            } elseif (is_string($data['created']) && !empty($data['created'])) {
+                $this->created = new DateTime($data['created']);
+            }
         }
-    }
 
-    /**
-     * Magic getter pour la compatibilité
-     */
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'profile_image':
-                return $this->profileImage;
-            default:
-                return property_exists($this, $name) ? $this->$name : null;
-        }
+        $this->profile_image = !empty($data['profile_image']) ? trim($data['profile_image']) : null;
     }
 
     /**
@@ -73,7 +38,31 @@ class User
      */
     public function isNew(): bool
     {
-        return $this->id_user === null;
+        return $this->id === null;
+    }
+
+    /**
+     * Retourne la date de création formatée
+     */
+    public function getCreatedFormatted(string $format = 'Y-m-d H:i:s'): string
+    {
+        return $this->created ? $this->created->format($format) : '';
+    }
+
+    /**
+     * Retourne l'URL complète de l'image de profil ou une image par défaut
+     */
+    public function getProfileImageUrl(string $defaultImage = 'default-avatar.jpg'): string
+    {
+        return $this->profile_image ?: $defaultImage;
+    }
+
+    /**
+     * Vérifie si l'utilisateur a une image de profil
+     */
+    public function hasProfileImage(): bool
+    {
+        return !empty($this->profile_image);
     }
 
     /**
@@ -82,12 +71,22 @@ class User
     public function toArray(): array
     {
         return [
-            'id_user' => $this->id_user,
+            'id' => $this->id,
             'username' => $this->username,
             'password' => $this->password,
             'email' => $this->email,
-            'created' => $this->created,
-            'profile_image' => $this->profileImage,
+            'created' => $this->created?->format('Y-m-d H:i:s'),
+            'profile_image' => $this->profile_image,
         ];
+    }
+
+    /**
+     * Retourne un tableau des données sans le mot de passe (pour l'affichage)
+     */
+    public function toSafeArray(): array
+    {
+        $data = $this->toArray();
+        unset($data['password']);
+        return $data;
     }
 }

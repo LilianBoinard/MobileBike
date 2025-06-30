@@ -32,8 +32,8 @@
                         </div>
                         <div class="card-content">
                             <h3 class="card-model-title">{{ product.name }}</h3>
-                            <p class="card-price">à partir de {{ product.price|number_format(2, ',', ' ') }}€</p>
-                            <p class="card-description">{{ product.description }}</p>
+                            <p class="card-price">à partir de {{ product.price|number_format(2, ',', ' ') }} €</p>
+                            <p class="card-description">{{ product.short_description }}</p>
                         </div>
                     </div>
                 {% endfor %}

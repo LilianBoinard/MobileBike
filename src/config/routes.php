@@ -21,8 +21,11 @@ $router->get('/admin/dashboard', 'Admin\DashboardController@index')->name('admin
 $router->get('/admin/users', 'Admin\UserController@index')->name('admin.users');
 **/
 
-$router->get('/', 'HomeController@index')->name('home');
+// HOME
+$router->get('/', 'AboutController@index')->name('home');
 
+
+// User Pages
 $router->get('/about', 'AboutController@index')->name('about');
 $router->get('/services', 'ServicesController@index')->name('services');
 $router->get('/products', 'ProductsController@index')->name('products');
@@ -31,22 +34,33 @@ $router->get('/login', 'LoginController@index')->name('login');
 $router->post('/login', 'UserController@attemptLogin')->name('login');
 $router->get('/logout', 'UserController@attemptLogout')->name('logout');
 
-$router->get('/dashboard', 'DashboardController@index')->name('dashboard');
+// Dashboard section
+$router->get('/dashboard/home', 'DashboardController@index')->name('dashboard');
+$router->get('/dashboard/administration', 'DashboardAdministrationController@index')->name('dashboard.administration');
 
-$router->get('/dashboard/products', 'DashboardProductsController@index')->name('dashboard-products');
-$router->get('/dashboard/product/edit/{id}', 'DashboardProductsController@displayEditProductPage')
-    ->where(['id' => '\d+'])
-    ->name('dashboard-product-edit');
-$router->get('/dashboard/products/mobilebike/add', 'DashboardProductsController@displayAddMobileBikePage')->name('dashboard-product-mobilebike-add');
-$router->post('/dashboard/products/mobilebike/add', 'DashboardProductsController@saveMobileBike')->name('dashboard-product-mobilebike-add');
-$router->get('/dashboard/products/sparepart/add', 'DashboardProductsController@displayAddSparePartPage')->name('dashboard-product-sparepart-add');
-$router->post('/dashboard/products/sparepart/add', 'DashboardProductsController@saveSparePart')->name('dashboard-product-sparepart-add');
+// Dashboard Product
+$router->get('/dashboard/products', 'DashboardProductsController@index')->name('dashboard.products');
+
+$router->get('/dashboard/products/mobilebike/add', 'DashboardProductsController@displayAddMobileBikePage')->name('dashboard.products.mobilebike.add');
+$router->post('/dashboard/products/mobilebike/add', 'DashboardProductsController@saveMobileBike')->name('dashboard.products.mobilebike.add');
+
+$router->get('/dashboard/products/sparepart/add', 'DashboardProductsController@displayAddSparePartPage')->name('dashboard.products.sparepart.add');
+$router->post('/dashboard/products/sparepart/add', 'DashboardProductsController@saveSparePart')->name('dashboard.products.sparepart.add');
+
 $router->post('/dashboard/products/delete/{id}', 'DashboardProductsController@deleteProduct')
     ->where(['id' => '\d+'])
-    ->name('dashboard-product-delete');
+    ->name('dashboard.products.delete');
+
 $router->get('/dashboard/products/edit/{id}', 'DashboardProductsController@displayEditProductPage')
     ->where(['id' => '\d+'])
-    ->name('dashboard-product-edit');
+    ->name('dashboard.products.edit');
 $router->post('/dashboard/products/edit/{id}', 'DashboardProductsController@editProduct')
     ->where(['id' => '\d+'])
-    ->name('dashboard-product-edit');
+    ->name('dashboard.products.edit');
+
+// Dashboard Profile
+$router->get('/dashboard/profile/edit', 'DashboardProfile@index')->name('dashboard.profile.edit');
+$router->post('/dashboard/profile/edit', 'DashboardProfile@update')->name('dashboard.profile.edit');
+
+// Dashboard Cart
+$router->get('/dashboard/cart', 'DashboardCart@index')->name('dashboard.cart');

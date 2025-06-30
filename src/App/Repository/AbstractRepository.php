@@ -13,19 +13,12 @@ abstract class AbstractRepository implements RepositoryInterface
     protected string $table;
     protected string $entityClass;
     protected string $primaryKey = 'id'; // Par défaut
-    protected bool $hasPolymorphicRelations = false; // Indique si le repository gère des relations polymorphes
 
     /**
      * Trouve tous les enregistrements
-     * Pour les repositories polymorphes, cette méthode peut être surchargée
      */
     public function findAll(): array
     {
-        if ($this->hasPolymorphicRelations) {
-            // Déléguer aux repositories polymorphes pour gérer les jointures
-            return $this->findAllWithType();
-        }
-
         $stmt = $this->database->query("SELECT * FROM {$this->table}");
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -34,16 +27,9 @@ abstract class AbstractRepository implements RepositoryInterface
 
     /**
      * Trouve un enregistrement par ID
-     * Pour les repositories polymorphes, cette méthode peut être surchargée
      */
     public function findById(int $id): ?object
     {
-        if ($this->hasPolymorphicRelations) {
-            // Déléguer aux repositories polymorphes pour gérer les jointures
-            return $this->findByIdWithType($id);
-        }
-
-        error_log("DEBUG - Table: {$this->table}, PK: {$this->primaryKey}");
         $stmt = $this->database->prepare("SELECT * FROM {$this->table} WHERE {$this->primaryKey} = :id LIMIT 1");
         $stmt->execute(['id' => $id]);
 
@@ -64,49 +50,30 @@ abstract class AbstractRepository implements RepositoryInterface
 
     /**
      * Supprime un enregistrement par ID
-     * Pour les repositories polymorphes, cette méthode peut être surchargée
      */
     public function delete(int $id): bool
     {
-        if ($this->hasPolymorphicRelations) {
-            // Pour les relations polymorphes, il faut d'abord récupérer l'entité
-            // pour déterminer son type et supprimer les relations
-            $entity = $this->findById($id);
-            if ($entity) {
-                return $this->deleteEntity($entity);
-            }
-            return false;
-        }
-
         $stmt = $this->database->prepare("DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id");
         return $stmt->execute(['id' => $id]);
     }
 
     /**
-     * Supprime une entité (pour la gestion polymorphe)
+     * Vérifie si une valeur est disponible pour un champ donné
      */
-    protected function deleteEntity(object $entity): bool
+    public function available(string $field, string $value, ?int $excludeUserId = null): bool
     {
-        // Par défaut, suppression simple
-        // À surcharger dans les repositories polymorphes
-        if (property_exists($entity, $this->primaryKey)) {
-            $id = $entity->{$this->primaryKey};
-            $stmt = $this->database->prepare("DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id");
-            return $stmt->execute(['id' => $id]);
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE {$field} = :value";
+        $params = ['value' => $value];
+
+        if ($excludeUserId !== null) {
+            $sql .= " AND {$this->primaryKey} != :exclude_id";
+            $params['exclude_id'] = $excludeUserId;
         }
-        return false;
-    }
 
-    /**
-     * Vérifie si une valeur est disponible (n'existe pas déjà)
-     */
-    public function available(string $column, mixed $value): bool
-    {
-        $sql = "SELECT 1 FROM {$this->table} WHERE {$column} = :value LIMIT 1";
         $stmt = $this->database->prepare($sql);
-        $stmt->execute(['value' => $value]);
+        $stmt->execute($params);
 
-        return $stmt->fetchColumn() === false;
+        return $stmt->fetchColumn() == 0;
     }
 
     /**
@@ -127,21 +94,6 @@ abstract class AbstractRepository implements RepositoryInterface
             $entities[] = $this->hydrateEntity($data);
         }
         return $entities;
-    }
-
-    /**
-     * Méthodes pour les repositories polymorphes à surcharger si nécessaire
-     */
-    protected function findAllWithType(): array
-    {
-        // À implémenter dans les repositories polymorphes
-        return $this->findAll();
-    }
-
-    protected function findByIdWithType(int $id): ?object
-    {
-        // À implémenter dans les repositories polymorphes
-        return $this->findById($id);
     }
 
     /**

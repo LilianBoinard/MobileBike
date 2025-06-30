@@ -54,7 +54,7 @@
 
   &-item {
     position: relative;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 0 2px rgba(0, 0, 0, 0.2);
 
     &-link {
       display: flex;
@@ -90,12 +90,18 @@
     :hover {
       background-color: color.adjust(theme.$color-secondary, $lightness: +30%);
     }
+    &.active {
+      background-color: theme.$color-secondary;
+    }
   }
 
   &-item-admin {
     background-color: color.adjust(theme.$color-accent, $lightness: +40%);
     :hover {
       background-color: color.adjust(theme.$color-accent, $lightness: +30%);
+    }
+    &.active {
+      background-color: theme.$color-accent;
     }
   }
 

@@ -70,9 +70,12 @@ class Route implements RouteInterface
             return false;
         }
 
+        // Normaliser le path de la requête de la même manière que le pattern
+        $normalizedPath = $this->normalizePattern($path);
+
         // Vérifier le pattern
         $regex = $this->buildRegex();
-        if (!preg_match($regex, $path, $matches)) {
+        if (!preg_match($regex, $normalizedPath, $matches)) {
             return false;
         }
 

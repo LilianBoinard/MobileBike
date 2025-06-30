@@ -18,7 +18,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
         $this->auth = $auth;
         $this->options = array_merge([
             'redirectTo' => '/login',
-            'whitelist' => ['login', 'home'], // Routes exemptées de l'authentification
+            'whitelist' => ['login', 'home', 'about', 'services', 'products', 'contact'], // Routes exemptées de l'authentification
         ], $options);
     }
 

@@ -55,12 +55,14 @@ class DashboardProductsController extends AbstractController
     {
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin || !$user) {
             throw new UnauthorizedException();
         }
 
         $products = $this->productRepository->findAll();
+
+        $currentPage = $request->getQueryParams()['page'] ?? 1;
 
         return new Response(
             200,
@@ -69,7 +71,8 @@ class DashboardProductsController extends AbstractController
                 'user' => $user,
                 'isClient' => true,
                 'isAdmin' => true,
-                'products' => $products
+                'products' => $products,
+                'currentPage' => $currentPage
             ])
         );
     }
@@ -84,7 +87,7 @@ class DashboardProductsController extends AbstractController
 
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }
@@ -111,7 +114,7 @@ class DashboardProductsController extends AbstractController
     {
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }
@@ -132,7 +135,7 @@ class DashboardProductsController extends AbstractController
     {
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }
@@ -214,7 +217,7 @@ class DashboardProductsController extends AbstractController
     {
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }
@@ -257,7 +260,7 @@ class DashboardProductsController extends AbstractController
     {
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }
@@ -296,7 +299,7 @@ class DashboardProductsController extends AbstractController
 
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }
@@ -407,7 +410,7 @@ class DashboardProductsController extends AbstractController
 
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        $isAdmin = $this->userRepository->isAdministrator($user->id_user);
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
         if (!$isAdmin) {
             throw new UnauthorizedException();
         }

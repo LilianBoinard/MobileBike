@@ -29,7 +29,7 @@ class UserController extends AbstractController
             }
 
             // Redirection après succès
-            return new Response(302, ['Location' => '/dashboard']);
+            return new Response(302, ['Location' => '/dashboard/home']);
 
         } catch (\Exception $e) {
             // Gestion des erreurs (mauvais credentials, etc.)

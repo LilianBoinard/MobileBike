@@ -70,28 +70,29 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for product in products %}
+                    {% set start = (currentPage - 1) * 5 %}
+                    {% for product in products|slice(start, 5) %}
                         <tr>
                             <td class="product-image">
                                 <img src="{{ product.image ? '/assets/uploads/products/' ~ product.image : '/assets/images/default-bike.jpg' }}" alt="{{ product.name }}">
                             </td>
                             <td class="product-name">{{ product.name }}</td>
                             <td>{{ product.brand }}</td>
-                            <td class="product-price">{{ product.price }} €</td>
+                            <td class="product-price">{{ product.price|number_format(2, ',', ' ') }} €</td>
                             <td>
-                                    <span class="stock-badge {{ product.stock ? 'in-stock' : 'out-stock' }}">
-                                        {{ product.stock ? 'En stock' : 'Rupture' }}
+                                    <span class="stock-badge {{ product.isInStock() ? 'in-stock' : 'out-stock' }}">
+                                        {{ product.isInStock() ? 'En stock' : 'Rupture' }}
                                     </span>
                             </td>
                             <td class="product-actions">
                                 <div class="actions-group">
-                                    <a href="../products/mobilebike/{{ product.id_product }}" class="btn-view">
+                                    <a href="../products/mobilebike/{{ product.id }}" class="btn-view">
                                         <i class="fa-solid fa-eye" data-feather="eye" aria-label="voir"></i>
                                     </a>
-                                    <a href="/dashboard/products/edit/{{ product.id_product }}" class="btn-edit">
+                                    <a href="/dashboard/products/edit/{{ product.id }}" class="btn-edit">
                                         <i class="fa-solid fa-pencil" data-feather="edit" aria-label="modifier"></i>
                                     </a>
-                                    <form action="/dashboard/products/delete/{{ product.id_product }}" method="POST" class="delete-form">
+                                    <form action="/dashboard/products/delete/{{ product.id }}" method="POST" class="delete-form">
                                         <button type="submit" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
                                             <i class="fa-solid fa-trash" data-feather="trash-2" aria-label="supprimer"></i>
                                         </button>
@@ -112,7 +113,7 @@
         </div>
 
         <!-- Pagination -->
-        {% if products|length > 0 %}
+        {% if products|length > 5 %}
             <div class="pagination">
                 {% if currentPage > 1 %}
                     <a href="?page={{ currentPage - 1 }}" class="page-btn">
@@ -120,7 +121,8 @@
                     </a>
                 {% endif %}
 
-                {% for page in 1..totalPages %}
+                {% set totalPages = ((products|length + 4) // 5) %}
+                {% for page in range(1, totalPages) %}
                     <a href="?page={{ page }}" class="page-btn {{ page == currentPage ? 'active' }}">
                         {{ page }}
                     </a>

@@ -9,7 +9,7 @@
     }
   },
   "scripts": {
-    "sass:build": "sass src/scss:public/assets/css --style=compressed --no-source-map"
+    "sass:build": "sass src/App/View/scss:public/assets/css --style=compressed --no-source-map"
   },
   "authors": [
     {

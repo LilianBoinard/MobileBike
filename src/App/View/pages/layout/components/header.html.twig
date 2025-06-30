@@ -1,23 +1,35 @@
 <header>
     <nav class="menubar">
         <a href=".." class="menubar-logo">
-            <img src="./assets/images/LogoMobileBike.png" alt="Mobile Bike Logo">
+            <img src="/assets/images/LogoMobileBike.png" alt="Mobile Bike Logo">
         </a>
         <ul class="menubar-links">
-            <li><a href="./about">Qui sommes-nous ?</a></li>
-            <li><a href="./services">Services</a></li>
-            <li><a href="./products">Nos Vélos</a></li>
-            <li><a href="./contact">Contact</a></li>
+            <li><a href="/about">Qui sommes-nous ?</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/products">Nos Vélos</a></li>
+            <li><a href="/contact">Contact</a></li>
         </ul>
 
-        <a href="./login" class="menubar-user-icon">
-            {% if user %}
-                <img src="{{ './assets/uploads/profiles/' ~ user.profileImage }}" alt="User Icon">
-            {% else %}
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgPHBhdGggZmlsbD0iIzU1NSIgZD0iTTEyLDRBNCw0IDAgMCwxIDE2LDhBNCw0IDAgMCwxIDEyLDEyQTQsNCAwIDAsMSA4LDhBNCw0IDAgMCwxIDEyLDRNMTIsMTRDMTYuNDIsMTQgMjAsMTUuNzkgMjAsMThWMjBINFYxOEM0LDE1Ljc5IDcuNTgsMTQgMTIsMTRaIiAvPgo8L3N2Zz4="
-                     alt="User Icon">
-            {% endif %}
-        </a>
+        <div class="dropdown">
+            <a class="menubar-user-icon dropdown-toggle" onclick="this.nextElementSibling.classList.toggle('is-active')">
+                {% if user %}
+                    <img src="{{ '/assets/uploads/profiles/' ~ user.getProfileImageUrl() }}" alt="User Icon">
+                {% else %}
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgPHBhdGggZmlsbD0iIzU1NSIgZD0iTTEyLDRBNCw0IDAgMCwxIDE2LDhBNCw0IDAgMCwxIDEyLDEyQTQsNCAwIDAsMSA4LDhBNCw0IDAgMCwxIDEyLDRNMTIsMTRDMTYuNDIsMTQgMjAsMTUuNzkgMjAsMThWMjBINFYxOEM0LDE1Ljc5IDcuNTgsMTQgMTIsMTRaIiAvPgo8L3N2Zz4="
+                         alt="User Icon">
+                {% endif %}
+            </a>
+            <div class="dropdown-menu">
+                {% if user %}
+                    <a href="/dashboard/home" class="dropdown-item"><i class="fa-solid fa-user"></i>Dashboard</a>
+                    <a href="/dashboard/cart" class="dropdown-item"><i class="fa-solid fa-cart-shopping"></i>Panier</a>
+                    <a href="/dashboard/profile/edit" class="dropdown-item"><i class="fa-solid fa-gear"></i>Paramètres</a>
+                    <a href="/logout" class="dropdown-item"><i class="fa-solid fa-circle-xmark"></i></i>Déconnexion</a>
+                {% else %}
+                    <a href="/login" class="dropdown-item"><i class="fa-solid fa-right-to-bracket"></i>Connexion</a>
+                {% endif %}
+            </div>
+        </div>
 
         <div class="menubar-burger-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

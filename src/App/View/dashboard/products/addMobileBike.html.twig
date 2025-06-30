@@ -14,8 +14,16 @@
         </div>
 
         <div class="form-group">
-            <label for="description" class="form-label">Description</label>
-            <input type="text" id="description" name="description" class="form-control" placeholder="Une super vitesse..." required>
+            <label for="short_description" class="form-label">Courte Description</label>
+            <input type="text" id="short_description" name="short_description" class="form-control"
+                   placeholder="Une super vitesse..." required>
+        </div>
+
+        <div class="form-group">
+            <label for="long_description" class="form-label">Longue Description</label>
+            <textarea type="textarea" id="long_description" name="long_description" class="form-control form-textarea"
+                      placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod turpis vitae nunc mollis ultricies. Quisque venenatis facilisis ligula ac vulputate. Duis maximus, velit non fringilla egestas, eros ligula ornare turpis, eu blandit velit quam a urna. Pellentesque vulputate vestibulum justo, id convallis lorem pulvinar ut. Proin nec dui non leo venenatis accumsan sit amet non felis. In faucibus nisi vitae nisi semper, id mattis magna gravida. Sed urna massa, ornare ac semper eu, sodales a turpis. Cras ullamcorper feugiat interdum. Proin rhoncus, ex non tincidunt maximus, nisl lectus blandit odio, quis malesuada ligula ante non risus. Mauris ut efficitur tortor. Aenean varius mi vel lacus tempus ullamcorper. Vestibulum cursus erat sit amet leo congue sollicitudin. Nullam ullamcorper, sem sit amet porta tincidunt, orci augue malesuada diam, id mattis turpis risus venenatis nisl. In sit amet odio ut nibh tincidunt feugiat mollis eget sapien. Nullam ut metus est. Suspendisse pretium ipsum sed justo aliquam, eu faucibus ipsum commodo.."
+                      required></textarea>
         </div>
 
         <div class="form-group">
@@ -54,17 +62,15 @@
         <div class="form-group">
             <label for="type" class="form-label">Type</label>
             <select id="type" name="type" class="form-control form-select">
-            {% for type in mobileBikeTypes %}
-                <option value="{{ type }}">{{ type|title }}</option>
-            {% endfor %}
+                {% for type in mobileBikeTypes %}
+                    <option value="{{ type }}">{{ type|title }}</option>
+                {% endfor %}
             </select>
         </div>
 
-        <div class="form-check-group">
-            <label class="form-check">
-                <span class="form-check-label">En stock ?</span>
-                <input type="checkbox" id="stock" name="stock" class="form-check-input" value="1" checked>
-            </label>
+        <div class="form-group">
+            <label for="stock_quantity" class="form-label">Nombre en stock</label>
+            <input type="number" id="stock_quantity" name="stock_quantity" class="form-control" placeholder="1" required>
         </div>
 
         <button type="submit" class="form-submit">Ajouter</button>

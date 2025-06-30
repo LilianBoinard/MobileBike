@@ -3,15 +3,15 @@
 namespace MobileBike\App\Controller;
 
 use GuzzleHttp\Psr7\Response;
+use MobileBike\App\Controller\AbstractController;
 use MobileBike\App\Repository\User\UserRepository;
 use MobileBike\Core\Contracts\Authentication\AuthenticationInterface;
 use MobileBike\Core\Exception\Exceptions\UnauthorizedException;
 use MobileBike\Core\View\View;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
-class DashboardController extends AbstractController
+class DashboardAdministrationController extends AbstractController
 {
+
     private UserRepository $userRepository;
 
     public function __construct(View $view, AuthenticationInterface $authentication, UserRepository $userRepository){
@@ -20,25 +20,22 @@ class DashboardController extends AbstractController
         $this->userRepository = $userRepository;
     }
 
-    public function index(ServerRequestInterface $request): ResponseInterface {
-
+    public function index()
+    {
         // Vérification d'autorisation
         $user = $this->authentication->user();
-        if (empty($user)){
+        $isAdmin = $this->userRepository->isAdministrator($user->id);
+        if (!$isAdmin){
             throw new UnauthorizedException();
         }
-
-        // Récuperation des roles
-        $isClient = $this->userRepository->isClient($user->id);
-        $isAdmin = $this->userRepository->isAdministrator($user->id);
 
         return new Response(
             200,
             ['Content-Type' => 'text/html'],
-            $this->view->twig('dashboard/dashboard.html.twig', [
+            $this->view->twig('dashboard/administration.html.twig', [
                 'user' => $user,
-                'isClient' => $isClient,
-                'isAdmin' => $isAdmin
+                'isClient' => true,
+                'isAdmin' => true
             ])
         );
     }

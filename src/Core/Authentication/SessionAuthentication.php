@@ -42,7 +42,7 @@ class SessionAuthentication implements AuthenticationInterface
             ? $this->repository->findByEmail($credentials['email'])
             : $this->repository->findByUsername($credentials['username']);
         if ($user && password_verify($credentials['password'], $user->password)) {
-            $this->session->set('id_user', $user->id_user);
+            $this->session->set('id_user', $user->id);
             return true;
         }
 

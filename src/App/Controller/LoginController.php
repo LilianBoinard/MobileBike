@@ -7,7 +7,6 @@ use MobileBike\Core\Authentication\SessionAuthentication;
 use MobileBike\Core\Database\Database;
 use MobileBike\Core\View\View;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class LoginController extends AbstractController
 {
@@ -22,7 +21,7 @@ class LoginController extends AbstractController
     {
         // Si l'utilisateur est connecté on le redirige au Dashboard
         if ($this->authentication->check()) {
-            return new Response(302, ['Location' => '/dashboard']);
+            return new Response(302, ['Location' => '/dashboard/home']);
         }
 
         return new Response(
