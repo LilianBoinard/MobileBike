@@ -63,4 +63,8 @@ $router->get('/dashboard/profile/edit', 'DashboardProfile@index')->name('dashboa
 $router->post('/dashboard/profile/edit', 'DashboardProfile@update')->name('dashboard.profile.edit');
 
 // Dashboard Cart
-$router->get('/dashboard/cart', 'DashboardCart@index')->name('dashboard.cart');
+$router->get('/dashboard/cart', 'DashboardCartController@index')->name('dashboard.cart');
+$router->post('/dashboard/cart/add', 'DashboardCartController@addToCart')->name('dashboard.cart.addItem');
+$router->post('/dashboard/cart/clear', 'DashboardCartController@clearCart')->name('dashboard.cart.clear');
+$router->post('/dashboard/cart/remove', 'DashboardCartController@removeFromCart')->name('dashboard.cart.removeItem');
+$router->post('/dashboard/cart/update-quantity', 'DashboardCartController@updateQuantity')->name('dashboard.cart.updateItemQuantity');

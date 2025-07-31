@@ -34,6 +34,15 @@
                             <h3 class="card-model-title">{{ product.name }}</h3>
                             <p class="card-price">à partir de {{ product.price|number_format(2, ',', ' ') }} €</p>
                             <p class="card-description">{{ product.short_description }}</p>
+
+                        </div>
+                        <div class="card-footer">
+                            <form method="POST" action="/dashboard/cart/add">
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <label for="quantity-{{ product.id }}" class="visually-hidden">Quantité</label>
+                                <input type="number" name="quantity" id="quantity-{{ product.id }}" value="1" min="1" class="card-quantity-input">
+                                <button type="submit" class="cta-button-secondary cta-button-small cta-button-rounded">Ajouter au panier</button>
+                            </form>
                         </div>
                     </div>
                 {% endfor %}

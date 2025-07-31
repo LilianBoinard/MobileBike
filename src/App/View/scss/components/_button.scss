@@ -1,8 +1,8 @@
 @use '../theme';
 @use 'sass:color';
 
-.cta-button {
-  background-color: theme.$color-primary;
+@mixin cta-button($bg-color) {
+  background-color: $bg-color;
   color: theme.$color-text-light;
   border: none;
   padding: 15px 25px;
@@ -10,8 +10,27 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: color.adjust($bg-color, $lightness: -10%);
+  }
 }
 
-.cta-button:hover {
-  background-color: color.adjust(theme.$color-primary, $lightness: -10%)
+.cta-button {
+  @include cta-button(theme.$color-primary);
 }
+
+.cta-button-secondary {
+  @include cta-button(theme.$color-secondary);
+}
+
+.cta-button-small {
+  padding: 0.4rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.cta-button-rounded {
+  border-radius: 10px;
+}
+
